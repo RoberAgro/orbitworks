@@ -28,3 +28,5 @@ Thumbs.db
 # Generated project output
 artifacts/
 figures/
+docs/_build/
+docs/source/api/
