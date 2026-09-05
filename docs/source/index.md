@@ -1,42 +1,53 @@
 # OrbitWorks
 
 OrbitWorks is a small computational laboratory for learning classical orbital
-mechanics. The documentation keeps the governing equations visible while
-connecting analytical orbits, numerical trajectories, conservation laws, and
-orbital geometry.
+mechanics. The documentation connects analytical results, numerical
+trajectories, conservation laws, and orbital geometry.
 
-```{admonition} Project scope
-:class: note
 
-OrbitWorks is an educational project, not a high-fidelity mission-design or
-astrodynamics package.
-```
+## Documentation
 
-## Learn the mechanics
+::::{grid} 1 2 2 2
+:gutter: 3
 
-The theory guide begins with the physical picture of an orbit as continuous
-free fall. It then develops circular motion, energy and escape, angular
-momentum, conic sections, and finally Kepler's laws.
+:::{grid-item-card} Orbital mechanics
+:link: theory/index
+:link-type: doc
+
+Develop Newtonian gravity, conic orbits, energy, angular momentum, and
+Kepler's laws from first principles.
+:::
+
+:::{grid-item-card} Simulation examples
+:link: examples/index
+:link-type: doc
+
+Explore focused computational experiments that connect the equations to
+orbital trajectories.
+:::
+
+:::{grid-item-card} Bibliography
+:link: references/bibliography
+:link-type: doc
+
+Browse the sources cited throughout the OrbitWorks documentation.
+:::
+
+:::{grid-item-card} API reference
+:link: api_reference
+:link-type: doc
+
+Inspect the modules and public interfaces provided by the Python package.
+:::
+
+::::
 
 ```{toctree}
+:hidden:
 :maxdepth: 2
-:caption: Orbital mechanics
-:numbered:
 
-theory/01_newtonian_gravity
-theory/02_circular_orbits
-theory/03_energy_and_escape
-theory/04_angular_momentum
-theory/05_conic_orbits
-theory/06_energy_and_orbit_geometry
-theory/07_keplers_laws
-
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: Orbital mechanics
-
+theory/index
+examples/index
 references/bibliography
-api/orbitworks
+api_reference
 ```

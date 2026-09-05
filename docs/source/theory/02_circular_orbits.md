@@ -4,56 +4,62 @@ Circular motion provides the simplest bridge between local gravitational
 acceleration and a complete orbit. We approach it geometrically first, then
 recover the same result from kinematics and Newton's law.
 
+## Why an orbiting body does not simply fall into the central body
+
+An orbiting body is in fact falling continuously toward the central body. The difference between an impact trajectory and an orbit is that the body also has tangential velocity. If a projectile is launched horizontally, gravity bends its path downward. As the launch speed increases, the projectile travels farther before intersecting the surface. At a sufficiently high tangential velocity, the curvature of the projectile's trajectory can exactly match the curvature of the spherical body beneath it. The projectile then continues to fall without ever reaching the surface. That is the geometric essence of a circular orbit.
+
+
+
 ## Simple projectile derivation of circular orbital speed
 
-Consider a spherical body of radius $R$. A projectile is launched horizontally from near its surface with speed $v$.
-
-For a short interval $t$, assume the local gravitational acceleration $g$ is approximately constant.
+Consider a spherical body of radius $R$. A projectile is launched horizontally from near its surface with speed $v$. For a short time interval $\Delta t$, assume the local gravitational
+acceleration $g$ is approximately constant.
 
 The horizontal displacement is
 
 $$
-x=vt.
+\Delta x=v\,\Delta t.
 $$
 
 The vertical distance fallen under gravity is
 
 $$
-y_{\mathrm{fall}}
+\Delta y
 =
-\frac{1}{2}gt^2.
+\frac{1}{2}g(\Delta t)^2.
 $$
 
 Since
 
 $$
-t=\frac{x}{v},
+\Delta t=\frac{\Delta x}{v},
 $$
 
 we obtain
 
 $$
-y_{\mathrm{fall}}
+\Delta y
 =
-\frac{1}{2}g\left(\frac{x}{v}\right)^2
+\frac{1}{2}g\left(\frac{\Delta x}{v}\right)^2
 $$
 
 and therefore
 
 $$
 \boxed{
-y_{\mathrm{fall}}
+\Delta y
 =
-\frac{gx^2}{2v^2}
+\frac{g(\Delta x)^2}{2v^2}
 }
 $$
 
-Now calculate how much the spherical surface curves away over the same horizontal distance $x$.
+Now calculate the vertical distance $\Delta y_{\mathrm{s}}$ by which the
+spherical surface curves away over the same horizontal increment $\Delta x$.
 
 From circle geometry,
 
 $$
-R^2=x^2+(R-y)^2.
+R^2=(\Delta x)^2+(R-\Delta y_{\mathrm{s}})^2.
 $$
 
 Expanding,
@@ -61,60 +67,64 @@ Expanding,
 $$
 R^2
 =
-x^2+R^2-2Ry+y^2.
+(\Delta x)^2+R^2-2R\Delta y_{\mathrm{s}}
++(\Delta y_{\mathrm{s}})^2.
 $$
 
 Cancel $R^2$:
 
 $$
-0=x^2-2Ry+y^2.
+0=(\Delta x)^2-2R\Delta y_{\mathrm{s}}
++(\Delta y_{\mathrm{s}})^2.
 $$
 
 Rearrange:
 
 $$
-2Ry-y^2=x^2.
+2R\Delta y_{\mathrm{s}}-(\Delta y_{\mathrm{s}})^2
+=(\Delta x)^2.
 $$
 
 For a short distance,
 
 $$
-y\ll R,
+\Delta y_{\mathrm{s}}\ll R.
 $$
 
-so $y^2$ is negligible compared with $2Ry$. Hence,
+In the local limit $\Delta x/R\rightarrow 0$, the surface drop
+$\Delta y_{\mathrm{s}}$ is of order $(\Delta x)^2/R$. Its square is therefore
+of fourth order in $\Delta x$ and vanishes faster than the remaining terms.
+Neglecting $(\Delta y_{\mathrm{s}})^2$ gives
 
 $$
-2Ry\approx x^2.
+2R\Delta y_{\mathrm{s}}\approx(\Delta x)^2.
 $$
 
 Thus,
 
 $$
 \boxed{
-y_{\mathrm{surface}}
+\Delta y_{\mathrm{s}}
 \approx
-\frac{x^2}{2R}
+\frac{(\Delta x)^2}{2R}
 }
 $$
 
 For the projectile to fall at exactly the same local rate as the surface curves away,
 
 $$
-y_{\mathrm{fall}}
-=
-y_{\mathrm{surface}}.
+\Delta y=\Delta y_{\mathrm{s}}.
 $$
 
 Therefore,
 
 $$
-\frac{gx^2}{2v^2}
+\frac{g(\Delta x)^2}{2v^2}
 =
-\frac{x^2}{2R}.
+\frac{(\Delta x)^2}{2R}.
 $$
 
-Cancel $x^2/2$:
+For any nonzero $\Delta x$, cancel $(\Delta x)^2/2$:
 
 $$
 \frac{g}{v^2}
@@ -200,6 +210,9 @@ Take a local coordinate system tangent to the surface at launch:
 
 - $x$: tangential coordinate,
 - $y$: inward coordinate toward the center.
+
+Unlike $\Delta x$ and $\Delta y$ in the finite-increment argument above,
+$x$ and $y$ here denote coordinates measured from the launch point.
 
 At the instant of launch,
 
@@ -345,7 +358,7 @@ This formulation makes the geometry explicit: a circular orbit occurs when gravi
 
 ---
 
-## Systematic derivation of centripetal acceleration
+## Derivation of centripetal acceleration for a circular trajectory
 
 Consider uniform circular motion of radius $R$ with constant angular speed $\omega$.
 
@@ -371,7 +384,7 @@ $$
 R\omega
 \begin{bmatrix}
 -\sin\omega t\\
-\cos\omega t
++\cos\omega t
 \end{bmatrix}.
 $$
 
@@ -472,51 +485,297 @@ a_c=\frac{v^2}{R}
 }
 $$
 
-This is the centripetal acceleration.
+---
+
+
+## General derivation of centripetal acceleration
+
+
+The familiar expression
+
+$$
+a_c=\frac{v^2}{R}
+$$
+
+is usually introduced for circular motion, but it is a special case of a more general result. Any object moving along a curved trajectory has an acceleration associated with the change in direction of its velocity, even if its speed remains constant.
+
+Consider an arbitrary smooth trajectory. Let $s$ denote the arc length measured along the trajectory and let $\mathbf e_t$ be the unit vector tangent to it.
+
+The velocity can be written as
+
+$$
+\mathbf v=v\,\mathbf e_t,
+$$
+
+where
+
+$$
+v=\frac{ds}{dt}
+$$
+
+is the speed.
+
+Differentiating the velocity with respect to time gives
+
+$$
+\mathbf a
+=
+\frac{d\mathbf v}{dt}
+=
+\frac{d}{dt}
+\left(
+v\,\mathbf e_t
+\right).
+$$
+
+Applying the product rule,
+
+$$
+\mathbf a
+=
+\frac{dv}{dt}\mathbf e_t
++
+v\frac{d\mathbf e_t}{dt}.
+$$
+
+This expression already reveals two distinct ways in which the velocity can change:
+
+* its **magnitude** can change, through $dv/dt$;
+* its **direction** can change, through $d\mathbf e_t/dt$.
+
+The first contribution is straightforward. To understand the second, we need to determine how the tangent vector changes as we move along a curved trajectory.
+
+### Change in the tangent direction
+
+Because $\mathbf e_t$ is a unit vector,
+
+$$
+\mathbf e_t\cdot\mathbf e_t=1.
+$$
+
+Differentiating with respect to arc length $s$,
+
+$$
+\frac{d}{ds}
+\left(
+\mathbf e_t\cdot\mathbf e_t
+\right)
+=
+0.
+$$
+
+Using the product rule,
+
+$$
+2\mathbf e_t\cdot
+\frac{d\mathbf e_t}{ds}
+=
+0,
+$$
+
+and therefore
+
+$$
+\boxed{
+\mathbf e_t\cdot
+\frac{d\mathbf e_t}{ds}
+=
+0
+}
+$$
+
+Thus, $d\mathbf e_t/ds$ is perpendicular to $\mathbf e_t$.
+
+This has a simple geometric interpretation. Since $\mathbf e_t$ always has magnitude one, it cannot change by becoming longer or shorter. It can only change by rotating. Its derivative must therefore point perpendicular to the tangent.
+
+Define the unit normal vector $\mathbf e_n$ to point in the direction in which the tangent vector is turning. We can then write
+
+$$
+\frac{d\mathbf e_t}{ds}
+=
+\left|
+\frac{d\mathbf e_t}{ds}
+\right|
+\mathbf e_n.
+$$
+
+The magnitude
+
+$$
+\left|
+\frac{d\mathbf e_t}{ds}
+\right|
+$$
+
+measures how rapidly the direction of the trajectory changes per unit distance traveled. This quantity is defined as the **curvature**,
+
+$$
+\boxed{
+\kappa
+=
+\left|
+\frac{d\mathbf e_t}{ds}
+\right|
+}
+$$
+
+so that
+
+$$
+\boxed{
+\frac{d\mathbf e_t}{ds}
+=
+\kappa\,\mathbf e_n
+}
+$$
+
+A trajectory with large curvature turns rapidly, whereas a trajectory with small curvature turns gradually. A straight line has
+
+$$
+\kappa=0.
+$$
+
+### Radius of curvature
+
+It is often more intuitive to describe curvature in terms of a radius. The **radius of curvature** $\rho$ is defined as
+
+$$
+\boxed{
+\rho=\frac{1}{\kappa}
+}
+$$
+
+and therefore
+
+$$
+\boxed{
+\frac{d\mathbf e_t}{ds}
+=
+\frac{1}{\rho}\mathbf e_n
+}
+$$
+
+The meaning of $\rho$ becomes particularly clear by considering a circle.
+
+For a circle of radius $R$, an infinitesimal displacement along the circumference satisfies
+
+$$
+ds=R\,d\theta.
+$$
+
+Over the same displacement, the tangent vector rotates through the same infinitesimal angle $d\theta$. Since $\mathbf e_t$ is a unit vector, the magnitude of its infinitesimal change is
+
+$$
+|d\mathbf e_t|=d\theta.
+$$
+
+Therefore,
+
+$$
+\kappa
+=
+\left|
+\frac{d\mathbf e_t}{ds}
+\right|
+=
+\frac{d\theta}{R\,d\theta}
+=
+\frac{1}{R}.
+$$
+
+Thus, for a circle,
+
+$$
+\rho=R.
+$$
+
+For a general smooth trajectory, $\rho$ can therefore be interpreted as the radius of the circle that locally best matches the curvature of the trajectory: the **osculating circle**.
+
+### Normal and tangential acceleration
+
+We can now return to the acceleration.
+
+Using the chain rule,
+
+$$
+\frac{d\mathbf e_t}{dt}
+=
+\frac{d\mathbf e_t}{ds}
+\frac{ds}{dt}.
+$$
+
+Since
+
+$$
+\frac{ds}{dt}=v
+$$
+
+and
+
+$$
+\frac{d\mathbf e_t}{ds}
+=
+\frac{1}{\rho}\mathbf e_n,
+$$
+
+we obtain
+
+$$
+\frac{d\mathbf e_t}{dt}
+=
+\frac{v}{\rho}\mathbf e_n.
+$$
+
+Substituting this result into
+
+$$
+\mathbf a
+=
+\frac{dv}{dt}\mathbf e_t
++
+v\frac{d\mathbf e_t}{dt}
+$$
+
+gives
+
+$$
+\boxed{
+\mathbf a
+=
+\frac{dv}{dt}\mathbf e_t
++
+\frac{v^2}{\rho}\mathbf e_n
+}
+$$
+
+The acceleration therefore consists of two mutually perpendicular components.
+
+The **tangential acceleration**
+
+$$
+\boxed{
+a_t=\frac{dv}{dt}
+}
+$$
+
+changes the magnitude of the velocity and therefore the speed of the object.
+
+The **normal acceleration**
+
+$$
+\boxed{
+a_n=\frac{v^2}{\rho}
+}
+$$
+
+changes the direction of the velocity and points toward the local center of curvature.
+
+Thus, an object can accelerate even while moving at constant speed. If the trajectory is curved, the direction of the velocity changes continuously and a normal acceleration is required.
 
 ---
 
-## Curvature form of normal acceleration
+## Why closer planets have shorter years
 
-For any trajectory followed at speed $v$, the normal component of acceleration is
-
-$$
-\boxed{
-a_n=v^2\kappa
-}
-$$
-
-where $\kappa$ is the local curvature of the trajectory.
-
-For a circle,
-
-$$
-\kappa=\frac{1}{R},
-$$
-
-so
-
-$$
-\boxed{
-a_n=\frac{v^2}{R}
-}
-$$
-
-This is the general geometric interpretation of centripetal acceleration.
-
-The same relation appears in fluid mechanics for a fluid particle moving along a curved streamline:
-
-$$
-\boxed{
-a_n=\frac{V^2}{R_c}
-}
-$$
-
-where $R_c$ is the local radius of curvature of the streamline.
-
----
-
-## Circular orbit from Newtonian gravity
 
 For a circular orbit of radius $r$, gravity provides the centripetal acceleration.
 
@@ -540,41 +799,13 @@ Therefore,
 
 $$
 \boxed{
-v_c
+v_
 =
 \sqrt{\frac{GM}{r}}
 }
 $$
 
-If we define
-
-$$
-\mu=GM,
-$$
-
-then
-
-$$
-\boxed{
-v_c=\sqrt{\frac{\mu}{r}}
-}
-$$
-
-This immediately shows that planets closer to the Sun move faster:
-
-$$
-\boxed{
-v_c\propto r^{-1/2}
-}
-$$
-
-A smaller orbital radius implies a larger orbital speed.
-
----
-
-## Why closer planets have shorter years
-
-For a circular orbit,
+At the same time, the period of the orbit is given by
 
 $$
 T
@@ -643,18 +874,6 @@ There are two reasons closer planets have shorter years:
 
 Both effects shorten the orbital period.
 
-For elliptical orbits, the same law holds with $r$ replaced by the semi-major axis $a$:
-
-$$
-\boxed{
-T^2
-=
-\frac{4\pi^2}{GM}a^3
-}
-$$
-
-This will be derived later from the general orbital solution.
-
 ---
 
 ## Why circular orbits do not spiral inward
@@ -683,11 +902,7 @@ $$
 
 for an ideal circular gravitational orbit.
 
-Gravity changes the direction of velocity but not its magnitude in a circular orbit.
-
-Therefore the mechanical energy remains constant.
-
-A planet does not spiral inward because there is essentially no dissipative drag in an ideal two-body orbital problem.
+Gravity changes the direction of velocity but not its magnitude in a circular orbit. Therefore the mechanical energy remains constant. A planet does not spiral inward because there is essentially no dissipative drag in an ideal two-body orbital problem.
 
 If a dissipative force were present, mechanical energy would decrease. The orbit would then evolve, typically inward. This is why satellites in low Earth orbit can gradually lose altitude due to atmospheric drag.
 

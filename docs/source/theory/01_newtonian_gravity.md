@@ -1,12 +1,12 @@
 # Newtonian gravity and orbital intuition
 
-This chapter establishes the inverse-square law and the central physical idea:
+This chapter establishes Newton's inverse-square law of gravitation and the central physical idea:
 an orbiting body is always falling, but its tangential motion keeps it from
 intersecting the central body.
 
 ## Overview
 
-Planetary motion is one of the clearest examples of how a small number of physical principles can generate a large amount of structure.
+Planetary motion is one of the clearest examples of how a small number of physical principles can explain a wide range of natural phenomena.
 
 The starting point is Newton's law of universal gravitation,
 
@@ -26,13 +26,14 @@ where:
 - $r$ is the distance between the two bodies,
 - $\mathbf e_r$ is the outward radial unit vector.
 
-The minus sign indicates that gravity is attractive: the force points toward the central body.
+Each term in this equation can be interpreted as follows:
+- The product $Mm$ shows that the gravitational force is proportional to both masses. At a fixed separation, doubling either mass doubles the force, while doubling both masses increases the force by a factor of four. The dependence is symmetric: each body exerts a force of equal magnitude on the other.
+- The factor $1/r^2$ describes how gravity weakens with distance. Because the force follows an inverse-square law, doubling the distance reduces the force to $1/4$ of its original value. At three times the distance, it becomes $1/9$ as strong, and at ten times the distance, $1/100$ as strong.
+- Finally, the minus sign specifies the direction of the force. Since $\mathbf e_r$ points radially outward, $-\mathbf e_r$ points toward the central mass. Gravity is therefore an attractive force.
 
 When $M \gg m$, it is usually an excellent approximation to regard $M$ as fixed and study the motion of $m$ in the gravitational field of $M$.
 
-Newton's law can be used to derive Kepler's three laws.
-
-Kepler's laws were originally empirical laws: Johannes Kepler inferred them from astronomical observations, especially the very accurate planetary data collected by Tycho Brahe. Newton later showed that the laws follow naturally from inverse-square gravitation and Newtonian mechanics.
+Newton's law can be used to derive Kepler's three laws. Kepler's laws were originally empirical laws: Johannes Kepler inferred them from astronomical observations, especially the very accurate planetary data collected by Tycho Brahe. Newton later showed that the laws follow naturally from inverse-square gravitation and Newtonian mechanics.
 
 The three Kepler laws are:
 
@@ -52,7 +53,7 @@ The aim of this document is to derive these results in a logical progression, be
 
 ## Gravitational acceleration
 
-From Newton's law,
+The acceleration field due to gravity forces can be derived as follows. From Newton's law,
 
 $$
 \mathbf F
@@ -60,7 +61,7 @@ $$
 -\frac{GMm}{r^2}\mathbf e_r.
 $$
 
-Newton's second law is
+At the same time, Newton's second law of motion states that:
 
 $$
 \mathbf F=m\mathbf a.
@@ -104,15 +105,94 @@ This relation will be useful when connecting surface gravity with orbital veloci
 
 ---
 
-## Why an orbiting body does not simply fall into the central body
+## The physical intuition for the inverse-square law
 
-An orbiting body is in fact falling continuously toward the central body.
+Newton's law of gravitation can be motivated by a few simple physical assumptions. These assumptions do not prove the law or explain why gravity exists, but they make its mathematical form plausible.
 
-The difference between an impact trajectory and an orbit is that the body also has tangential velocity.
+First, suppose that a mass $M$ acts as a source of a gravitational field and that the total strength of this field flowing outward through any closed surface surrounding the mass is conserved. For an isolated point mass, there is no preferred direction, so spherical symmetry requires the field to spread uniformly in all directions.
 
-If a projectile is launched horizontally, gravity bends its path downward. As the launch speed increases, the projectile travels farther before intersecting the surface.
+Imagine enclosing the mass by spheres of increasing radius. The surface area of such a sphere is
 
-At a sufficiently high tangential velocity, the curvature of the projectile's trajectory can exactly match the curvature of the spherical body beneath it. The projectile then continues to fall without ever reaching the surface. That is the geometric essence of a circular orbit.
+$$
+A=4\pi r^2.
+$$
 
-There is no additional outward force balancing gravity in an inertial frame. Gravity itself is the force that continuously bends the inertial trajectory into a curved path.
+If the same total gravitational flux passes through every sphere, but is distributed over an area that grows as $r^2$, then the field strength must decrease in the same proportion:
+
+$$
+g(r)\propto\frac{1}{r^2}.
+$$
+
+The inverse-square dependence can therefore be understood geometrically: it is the natural consequence of a conserved radial field spreading through three-dimensional space.
+
+We can now ask how the strength of the interaction should depend on mass. If mass is the source of the gravitational field, and if gravitational contributions add linearly, doubling the source mass $M$ should double the field it produces. Thus,
+
+$$
+g\propto M.
+$$
+
+A second mass $m$ placed in this field experiences a force. If its response to the field is also linear in its mass, doubling $m$ doubles the force acting on it:
+
+$$
+F\propto m.
+$$
+
+Combining these two independent proportionalities gives
+
+$$
+F\propto Mm.
+$$
+
+The product $Mm$, rather than a sum such as $M+m$, follows naturally from this picture. The two masses play different roles in constructing the interaction: one determines the strength of the field, while the other determines how strongly it responds to that field. If either mass were reduced to zero, the gravitational interaction would disappear. A sum $M+m$ would not have this property: it would remain nonzero even if one of the masses vanished.
+
+Combining the dependence on mass with the geometric spreading of the field gives
+
+$$
+F\propto\frac{Mm}{r^2}.
+$$
+
+Introducing the proportionality constant $G$ and specifying that the force is attractive gives Newton's law,
+
+$$
+\mathbf F=-\frac{GMm}{r^2}\,\mathbf e_r.
+$$
+
+This reasoning should be understood as a motivation for the structure of the law, not as a fundamental derivation of gravity. It rests on assumptions (spherical symmetry, conservation of gravitational flux, and linear dependence on mass) that are themselves physical statements about how gravity behaves.
+
+---
+
+## How Newton was led to the law
+
+Newton did not arrive at the inverse-square dependence by imagining field
+lines. The historical route came primarily from celestial motion. For a nearly
+circular orbit, the required centripetal acceleration is
+
+$$
+a_c=\frac{4\pi^2r}{T^2}.
+$$
+
+Kepler's third law says that $T^2\propto r^3$. Combining the two relations
+immediately gives
+
+$$
+a_c\propto\frac{r}{r^3}=\frac{1}{r^2}.
+$$
+
+Newton also compared the acceleration of the Moon toward Earth with
+gravitational acceleration at Earth's surface. The decrease predicted from
+the much greater Earth--Moon distance was consistent with the inverse-square
+dependence. He subsequently developed the mathematical connection between a
+central inverse-square force and Kepler's elliptical orbits.
+
+The idea emerged from a broader seventeenth-century discussion rather than
+from Newton in isolation. Robert Hooke had argued for a central attraction and
+corresponded with Newton about an inverse-square dependence. In 1684, Edmond
+Halley asked Newton what orbit such a force would produce; Newton's work on
+that question developed into the *Principia*. Newton's decisive contribution
+was the systematic mathematical synthesis: the same mechanics explained
+falling bodies near Earth, the Moon's orbit, and planetary motion. See the
+[Newton Project's introduction to the texts](https://newtonproject.ox.ac.uk/texts/introduction)
+for a concise historical overview.
+
+
 
