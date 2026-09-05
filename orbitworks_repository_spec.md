@@ -12,7 +12,7 @@ The primary objective is not to build the most sophisticated or visually impress
 
 The project should make it easy to move through the following conceptual progression:
 
-\[
+$$
 \text{Newtonian gravity}
 \rightarrow
 \text{circular motion}
@@ -26,7 +26,7 @@ The project should make it easy to move through the following conceptual progres
 \text{numerical integration}
 \rightarrow
 \text{N-body extensions}
-\]
+$$
 
 The repository should therefore emphasize:
 
@@ -53,11 +53,11 @@ Avoid burying important equations inside abstractions.
 
 For example, the gravitational acceleration should remain visibly connected to
 
-\[
+$$
 \mathbf a
 =
 -\frac{\mu}{r^3}\mathbf r
-\]
+$$
 
 rather than being hidden behind layers of framework code.
 
@@ -69,11 +69,11 @@ Analytical orbital-element calculations and numerical ODE propagation should be 
 
 This allows important consistency checks such as:
 
-\[
+$$
 \text{analytical trajectory}
 \approx
 \text{numerically integrated trajectory}.
-\]
+$$
 
 The numerical solver should not depend internally on the analytical conic solution.
 
@@ -103,7 +103,7 @@ A recommended convention is SI:
 - velocity in m/s,
 - time in s,
 - mass in kg,
-- \(\mu\) in m\(^3\)/s\(^2\).
+- $\mu$ in m$^3$/s$^2$.
 
 Examples and visualizations may convert to km, days, AU, or years for readability.
 
@@ -205,13 +205,13 @@ Prefer authoritative numerical values and document their units.
 
 The package should use the standard gravitational parameter
 
-\[
+$$
 \boxed{
 \mu=GM
 }
-\]
+$$
 
-throughout the orbital equations because \(\mu\) appears directly in the dynamics and is often more convenient than carrying \(G\) and \(M\) separately.
+throughout the orbital equations because $\mu$ appears directly in the dynamics and is often more convenient than carrying $G$ and $M$ separately.
 
 ---
 
@@ -234,40 +234,40 @@ circular_period(mu, r)
 
 These correspond to:
 
-\[
+$$
 g(r)=\frac{\mu}{r^2}
-\]
+$$
 
-\[
+$$
 \boxed{
 v_c=\sqrt{\frac{\mu}{r}}
 }
-\]
+$$
 
-\[
+$$
 \boxed{
 v_{\mathrm{esc}}=\sqrt{\frac{2\mu}{r}}
 }
-\]
+$$
 
 and
 
-\[
+$$
 \boxed{
 T=2\pi\sqrt{\frac{r^3}{\mu}}
 }
-\]
+$$
 
 The first scripts should visualize these functions.
 
 Recommended plots:
 
-- \(g(r)\),
-- \(v_c(r)\),
-- \(v_{\mathrm{esc}}(r)\),
-- \(v_{\mathrm{esc}}/v_c\),
-- \(T(r)\),
-- \(T^2\) versus \(r^3\).
+- $g(r)$,
+- $v_c(r)$,
+- $v_{\mathrm{esc}}(r)$,
+- $v_{\mathrm{esc}}/v_c$,
+- $T(r)$,
+- $T^2$ versus $r^3$.
 
 The last plot should give a straight line and numerically illustrate Kepler's third law.
 
@@ -279,45 +279,45 @@ Create an educational script demonstrating Newton's cannonball argument.
 
 The script should compare the local projectile drop
 
-\[
+$$
 y_{\mathrm{fall}}
 =
 \frac{gx^2}{2v^2}
-\]
+$$
 
 with the local curvature of a spherical surface
 
-\[
+$$
 y_{\mathrm{surface}}
 \approx
 \frac{x^2}{2R}.
-\]
+$$
 
 At
 
-\[
+$$
 v=\sqrt{gR},
-\]
+$$
 
 the local curvatures match.
 
 The script should show several launch velocities:
 
-\[
+$$
 v<v_c,
-\]
+$$
 
-\[
+$$
 v=v_c,
-\]
+$$
 
 and
 
-\[
+$$
 v>v_c.
-\]
+$$
 
-This experiment should be clearly identified as a local approximation when constant \(g\) and flat tangent coordinates are used.
+This experiment should be clearly identified as a local approximation when constant $g$ and flat tangent coordinates are used.
 
 The exact orbital simulations should use inverse-square gravity.
 
@@ -327,29 +327,29 @@ The exact orbital simulations should use inverse-square gravity.
 
 Implement the conic equation:
 
-\[
+$$
 \boxed{
 r(\theta)
 =
 \frac{p}{1+e\cos\theta}
 }
-\]
+$$
 
 where
 
-\[
+$$
 \boxed{
 p=\frac{h^2}{\mu}
 }
-\]
+$$
 
 and, for ellipses,
 
-\[
+$$
 \boxed{
 p=a(1-e^2)
 }
-\]
+$$
 
 Functions might include:
 
@@ -364,21 +364,21 @@ semi_minor_axis(a, e)
 
 Relevant relations are:
 
-\[
+$$
 b=a\sqrt{1-e^2}
-\]
+$$
 
-\[
+$$
 r_p=a(1-e)
-\]
+$$
 
-\[
+$$
 r_a=a(1+e)
-\]
+$$
 
 The plotting script should show several eccentricities:
 
-\[
+$$
 e=0,
 \quad
 e=0.2,
@@ -390,7 +390,7 @@ e=0.8,
 e=1,
 \quad
 e>1.
-\]
+$$
 
 The figure should clearly place the central body at a focus rather than at the ellipse center.
 
@@ -408,51 +408,51 @@ classify_orbit_from_eccentricity(e, tolerance=...)
 
 with classifications:
 
-\[
+$$
 e=0
 \rightarrow
 \text{circle}
-\]
+$$
 
-\[
+$$
 0<e<1
 \rightarrow
 \text{ellipse}
-\]
+$$
 
-\[
+$$
 e=1
 \rightarrow
 \text{parabola}
-\]
+$$
 
-\[
+$$
 e>1
 \rightarrow
 \text{hyperbola}
-\]
+$$
 
-Because floating-point values rarely equal exactly \(1\), the implementation should use an explicit numerical tolerance.
+Because floating-point values rarely equal exactly $1$, the implementation should use an explicit numerical tolerance.
 
 A second classification should use specific mechanical energy:
 
-\[
+$$
 \varepsilon<0
 \rightarrow
 \text{bound}
-\]
+$$
 
-\[
+$$
 \varepsilon=0
 \rightarrow
 \text{parabolic escape}
-\]
+$$
 
-\[
+$$
 \varepsilon>0
 \rightarrow
 \text{hyperbolic escape}.
-\]
+$$
 
 ---
 
@@ -475,7 +475,7 @@ vis_viva_speed(mu, r, a)
 
 The primary equations are:
 
-\[
+$$
 \boxed{
 \varepsilon
 =
@@ -483,21 +483,21 @@ The primary equations are:
 -
 \frac{\mu}{r}
 }
-\]
+$$
 
 for the general two-body state,
 
-\[
+$$
 \boxed{
 \varepsilon
 =
 -\frac{\mu}{2a}
 }
-\]
+$$
 
 for an ellipse, and
 
-\[
+$$
 \boxed{
 v^2
 =
@@ -508,11 +508,11 @@ v^2
 \frac{1}{a}
 \right)
 }
-\]
+$$
 
 for the vis-viva equation.
 
-The implementation should make it easy to verify that the same value of \(\varepsilon\) is obtained everywhere along an analytically defined ellipse.
+The implementation should make it easy to verify that the same value of $\varepsilon$ is obtained everywhere along an analytically defined ellipse.
 
 ---
 
@@ -520,45 +520,45 @@ The implementation should make it easy to verify that the same value of \(\varep
 
 Implement specific angular momentum:
 
-\[
+$$
 \boxed{
 \mathbf h
 =
 \mathbf r\times\mathbf v
 }
-\]
+$$
 
 and its magnitude
 
-\[
+$$
 h=|\mathbf h|.
-\]
+$$
 
 For planar motion,
 
-\[
+$$
 \boxed{
 h=xv_y-yv_x
 }
-\]
+$$
 
 The package should also expose the relation
 
-\[
+$$
 \boxed{
 p=\frac{h^2}{\mu}
 }
-\]
+$$
 
 and, for an ellipse,
 
-\[
+$$
 \boxed{
 h^2
 =
 \mu a(1-e^2)
 }
-\]
+$$
 
 These relations are useful both analytically and for validating numerical solutions.
 
@@ -568,7 +568,7 @@ These relations are useful both analytically and for validating numerical soluti
 
 Implement the eccentricity vector:
 
-\[
+$$
 \boxed{
 \mathbf e
 =
@@ -576,15 +576,15 @@ Implement the eccentricity vector:
 -
 \frac{\mathbf r}{r}
 }
-\]
+$$
 
 Its magnitude is the orbital eccentricity:
 
-\[
+$$
 \boxed{
 e=|\mathbf e|
 }
-\]
+$$
 
 The eccentricity vector points toward periapsis.
 
@@ -599,14 +599,14 @@ eccentricity(mu, r_vec, v_vec)
 
 The implementation should be checked against:
 
-\[
+$$
 \boxed{
 e^2
 =
 1+
 \frac{2\varepsilon h^2}{\mu^2}
 }
-\]
+$$
 
 ---
 
@@ -620,39 +620,39 @@ src/orbitworks/elements.py
 
 At minimum, the module should convert
 
-\[
+$$
 \mathbf r_0,\mathbf v_0
-\]
+$$
 
 into:
 
-- radius \(r\),
-- speed \(v\),
-- specific energy \(\varepsilon\),
-- specific angular momentum \(\mathbf h\),
-- eccentricity vector \(\mathbf e\),
-- eccentricity \(e\),
-- semi-major axis \(a\) where applicable,
-- semi-latus rectum \(p\),
+- radius $r$,
+- speed $v$,
+- specific energy $\varepsilon$,
+- specific angular momentum $\mathbf h$,
+- eccentricity vector $\mathbf e$,
+- eccentricity $e$,
+- semi-major axis $a$ where applicable,
+- semi-latus rectum $p$,
 - periapsis radius,
 - apoapsis radius for bound orbits,
 - orbit classification.
 
 For bound and unbound conics, the semi-major axis can be obtained from:
 
-\[
+$$
 \boxed{
 a=-\frac{\mu}{2\varepsilon}
 }
-\]
+$$
 
 provided
 
-\[
+$$
 \varepsilon\neq0.
-\]
+$$
 
-For a parabolic orbit, \(a\) is formally infinite.
+For a parabolic orbit, $a$ is formally infinite.
 
 The code should handle this explicitly rather than returning misleading finite values.
 
@@ -662,35 +662,35 @@ The code should handle this explicitly rather than returning misleading finite v
 
 This should be one of the main educational scripts.
 
-Choose a starting radius \(r_0\) and tangential launch velocity \(v\).
+Choose a starting radius $r_0$ and tangential launch velocity $v$.
 
 Compute:
 
-\[
+$$
 v_c
 =
 \sqrt{\frac{\mu}{r_0}}
-\]
+$$
 
 and
 
-\[
+$$
 v_{\mathrm{esc}}
 =
 \sqrt{\frac{2\mu}{r_0}}.
-\]
+$$
 
 For tangential launch above circular velocity and below escape velocity,
 
-\[
+$$
 v_c<v<v_{\mathrm{esc}},
-\]
+$$
 
 the starting point is periapsis.
 
 For this special case,
 
-\[
+$$
 \boxed{
 e
 =
@@ -698,13 +698,13 @@ e
 -
 1
 }
-\]
+$$
 
 The repository should verify this numerically.
 
 Suggested dimensionless launch speeds are:
 
-\[
+$$
 \frac{v}{v_c}
 =
 0.7,\,
@@ -715,7 +715,7 @@ Suggested dimensionless launch speeds are:
 1.3,\,
 \sqrt{2},\,
 1.6.
-\]
+$$
 
 For each case, calculate:
 
@@ -740,45 +740,45 @@ src/orbitworks/dynamics.py
 
 The basic two-body equation is
 
-\[
+$$
 \boxed{
 \ddot{\mathbf r}
 =
 -\frac{\mu}{r^3}\mathbf r
 }
-\]
+$$
 
 In two dimensions,
 
-\[
+$$
 \dot x=v_x,
-\]
+$$
 
-\[
+$$
 \dot y=v_y,
-\]
+$$
 
-\[
+$$
 \dot v_x
 =
 -\frac{\mu x}
 {(x^2+y^2)^{3/2}},
-\]
+$$
 
-\[
+$$
 \dot v_y
 =
 -\frac{\mu y}
 {(x^2+y^2)^{3/2}}.
-\]
+$$
 
 The state vector may be defined as
 
-\[
+$$
 \mathbf y
 =
 [x,y,v_x,v_y]^T.
-\]
+$$
 
 Implement:
 
@@ -788,23 +788,23 @@ two_body_rhs_2d(t, state, mu)
 
 A 3-D version should also be considered:
 
-\[
+$$
 \mathbf y
 =
 [x,y,z,v_x,v_y,v_z]^T.
-\]
+$$
 
 with
 
-\[
+$$
 \dot{\mathbf r}=\mathbf v,
-\]
+$$
 
-\[
+$$
 \dot{\mathbf v}
 =
 -\frac{\mu}{|\mathbf r|^3}\mathbf r.
-\]
+$$
 
 ---
 
@@ -867,7 +867,7 @@ This should be one of the core demonstrations.
 
 Procedure:
 
-1. Define an initial state \((\mathbf r_0,\mathbf v_0)\).
+1. Define an initial state $(\mathbf r_0,\mathbf v_0)$.
 2. Compute analytical orbital elements.
 3. Construct the analytical conic.
 4. Integrate the Cartesian ODE numerically.
@@ -897,25 +897,25 @@ src/orbitworks/diagnostics.py
 
 For every propagated state, calculate:
 
-\[
+$$
 \varepsilon(t)
 =
 \frac{v(t)^2}{2}
 -
 \frac{\mu}{r(t)}
-\]
+$$
 
 and
 
-\[
+$$
 \mathbf h(t)
 =
 \mathbf r(t)\times\mathbf v(t).
-\]
+$$
 
 Define relative conservation errors such as:
 
-\[
+$$
 \boxed{
 \delta_\varepsilon(t)
 =
@@ -925,11 +925,11 @@ Define relative conservation errors such as:
 |\varepsilon(0)|
 }
 }
-\]
+$$
 
 and
 
-\[
+$$
 \boxed{
 \delta_h(t)
 =
@@ -939,7 +939,7 @@ h(t)-h(0)
 h(0)
 }
 }
-\]
+$$
 
 for cases where these normalizations are well defined.
 
@@ -959,34 +959,34 @@ These diagnostics are essential for understanding numerical integration.
 
 The theoretical relation is
 
-\[
+$$
 \boxed{
 \frac{dA}{dt}
 =
 \frac{h}{2}
 }
-\]
+$$
 
 For discrete trajectory points, the swept area between two neighboring position vectors can be approximated by
 
-\[
+$$
 \Delta A
 \approx
 \frac{1}{2}
 |\mathbf r_i\times\mathbf r_{i+1}|.
-\]
+$$
 
 For equal time intervals,
 
-\[
+$$
 \Delta t=\mathrm{constant},
-\]
+$$
 
 the values of
 
-\[
+$$
 \frac{\Delta A}{\Delta t}
-\]
+$$
 
 should remain approximately constant.
 
@@ -997,7 +997,7 @@ Create a script that:
 - visualizes several swept sectors,
 - calculates swept area for each interval,
 - compares them numerically,
-- compares the result with \(h/2\).
+- compares the result with $h/2$.
 
 This experiment should make Kepler's second law visually and quantitatively clear.
 
@@ -1009,28 +1009,28 @@ For a family of elliptical or circular orbits, calculate periods and semi-major 
 
 Verify:
 
-\[
+$$
 \boxed{
 T^2
 =
 \frac{4\pi^2}{\mu}a^3
 }
-\]
+$$
 
 Possible numerical experiment:
 
-1. Generate several values of \(a\).
+1. Generate several values of $a$.
 2. Propagate one complete orbit for each.
 3. Estimate the orbital period numerically.
-4. Plot \(T^2\) against \(a^3\).
+4. Plot $T^2$ against $a^3$.
 5. Fit a straight line.
 6. Compare its slope with
 
-\[
+$$
 \boxed{
 \frac{4\pi^2}{\mu}
 }
-\]
+$$
 
 The code should report the relative error in the fitted slope.
 
@@ -1044,59 +1044,59 @@ Create:
 src/orbitworks/nondimensional.py
 ```
 
-Choose a reference length \(r_0\).
+Choose a reference length $r_0$.
 
 Define the characteristic velocity
 
-\[
+$$
 \boxed{
 v_0
 =
 \sqrt{\frac{\mu}{r_0}}
 }
-\]
+$$
 
 and characteristic time
 
-\[
+$$
 \boxed{
 t_0
 =
 \sqrt{\frac{r_0^3}{\mu}}
 }
-\]
+$$
 
 Define nondimensional variables:
 
-\[
+$$
 \tilde{\mathbf r}
 =
 \frac{\mathbf r}{r_0},
-\]
+$$
 
-\[
+$$
 \tilde{\mathbf v}
 =
 \frac{\mathbf v}{v_0},
-\]
+$$
 
-\[
+$$
 \tilde t
 =
 \frac{t}{t_0}.
-\]
+$$
 
 The dimensional equation
 
-\[
+$$
 \frac{d^2\mathbf r}{dt^2}
 =
 -\frac{\mu}{r^3}\mathbf r
-\]
+$$
 
 then becomes
 
-\[
+$$
 \boxed{
 \frac{d^2\tilde{\mathbf r}}
 {d\tilde t^2}
@@ -1108,9 +1108,9 @@ then becomes
 |\tilde{\mathbf r}|^3
 }
 }
-\]
+$$
 
-The important point is that the parameter \(\mu\) disappears completely.
+The important point is that the parameter $\mu$ disappears completely.
 
 The repository should provide utility functions for conversion between dimensional and nondimensional quantities.
 
@@ -1120,67 +1120,67 @@ The repository should provide utility functions for conversion between dimension
 
 Use:
 
-\[
+$$
 \mu=1,
 \qquad
 r_0=1.
-\]
+$$
 
 Then:
 
-\[
+$$
 v_c=1
-\]
+$$
 
 and
 
-\[
+$$
 v_{\mathrm{esc}}=\sqrt{2}.
-\]
+$$
 
 Start at
 
-\[
+$$
 \mathbf r_0=(1,0)
-\]
+$$
 
 with tangential velocity
 
-\[
+$$
 \mathbf v_0=(0,v).
-\]
+$$
 
 Run the following cases:
 
-\[
+$$
 v=0.8,
-\]
+$$
 
-\[
+$$
 v=1.0,
-\]
+$$
 
-\[
+$$
 v=1.1,
-\]
+$$
 
-\[
+$$
 v=1.3,
-\]
+$$
 
-\[
+$$
 v=\sqrt{2},
-\]
+$$
 
-\[
+$$
 v=1.6.
-\]
+$$
 
 For every case:
 
-- compute \(\varepsilon\),
-- compute \(\mathbf h\),
-- compute \(e\),
+- compute $\varepsilon$,
+- compute $\mathbf h$,
+- compute $e$,
 - classify the orbit,
 - generate the analytical conic,
 - numerically integrate the trajectory,
@@ -1189,23 +1189,23 @@ For every case:
 
 For the cases
 
-\[
+$$
 1<v<\sqrt{2},
-\]
+$$
 
 verify
 
-\[
+$$
 \boxed{
 e=v^2-1
 }
-\]
+$$
 
 because
 
-\[
+$$
 v_c=1.
-\]
+$$
 
 This should be treated as a flagship experiment in the repository.
 
@@ -1244,31 +1244,31 @@ Implement either velocity Verlet or leapfrog.
 
 For velocity Verlet, one possible form is:
 
-\[
+$$
 \mathbf v_{n+1/2}
 =
 \mathbf v_n
 +
 \frac{\Delta t}{2}
 \mathbf a(\mathbf r_n),
-\]
+$$
 
-\[
+$$
 \mathbf r_{n+1}
 =
 \mathbf r_n
 +
 \Delta t\,\mathbf v_{n+1/2},
-\]
+$$
 
-\[
+$$
 \mathbf v_{n+1}
 =
 \mathbf v_{n+1/2}
 +
 \frac{\Delta t}{2}
 \mathbf a(\mathbf r_{n+1}).
-\]
+$$
 
 Compare long-term energy behavior with standard RK methods.
 
@@ -1289,11 +1289,11 @@ The app should remain lightweight.
 Recommended controls:
 
 - central body,
-- central mass or \(\mu\),
+- central mass or $\mu$,
 - starting radius,
 - radial velocity,
 - tangential velocity,
-- velocity expressed optionally as \(v/v_c\),
+- velocity expressed optionally as $v/v_c$,
 - integration duration,
 - solver tolerance,
 - plotting time range.
@@ -1318,35 +1318,35 @@ Recommended outputs:
 
 A particularly useful slider is:
 
-\[
+$$
 \boxed{
 \frac{v}{v_c}
 }
-\]
+$$
 
 because moving this value continuously shows the transition between different orbital regimes.
 
 Suggested slider range:
 
-\[
+$$
 0.5
 \le
 \frac{v}{v_c}
 \le
 2.
-\]
+$$
 
 Important reference values should be visible:
 
-\[
+$$
 \frac{v}{v_c}=1
-\]
+$$
 
 for circular orbit and
 
-\[
+$$
 \frac{v}{v_c}=\sqrt{2}
-\]
+$$
 
 for escape from a tangential launch.
 
@@ -1519,59 +1519,59 @@ Examples:
 
 ### Circular velocity
 
-Given \(r\),
+Given $r$,
 
-\[
+$$
 \frac{v_c^2}{r}
 =
 \frac{\mu}{r^2}.
-\]
+$$
 
 ### Escape velocity
 
 Verify:
 
-\[
+$$
 v_{\mathrm{esc}}
 =
 \sqrt{2}\,v_c.
-\]
+$$
 
 ### Circular eccentricity
 
 For a circular initial condition,
 
-\[
+$$
 e\approx0.
-\]
+$$
 
 ### Elliptical energy
 
 For an ellipse,
 
-\[
+$$
 \varepsilon
 =
 -\frac{\mu}{2a}.
-\]
+$$
 
 ### Semi-latus rectum
 
 Verify:
 
-\[
+$$
 p
 =
 \frac{h^2}{\mu}
 =
 a(1-e^2).
-\]
+$$
 
 ### Vis-viva
 
 Verify:
 
-\[
+$$
 v^2
 =
 \mu
@@ -1580,41 +1580,41 @@ v^2
 -
 \frac{1}{a}
 \right).
-\]
+$$
 
 ### Tangential-launch eccentricity
 
 For
 
-\[
+$$
 v_c<v<v_{\mathrm{esc}},
-\]
+$$
 
 verify:
 
-\[
+$$
 e
 =
 \frac{v^2}{v_c^2}-1.
-\]
+$$
 
 ### Numerical conservation
 
 For a well-resolved two-body simulation:
 
-\[
+$$
 \varepsilon(t)
 \approx
 \varepsilon(0)
-\]
+$$
 
 and
 
-\[
+$$
 h(t)
 \approx
 h(0).
-\]
+$$
 
 The tolerances should be chosen in accordance with the numerical method and solver settings.
 
@@ -1627,8 +1627,8 @@ The implementation should explicitly consider:
 - zero-radius singularity,
 - near-parabolic trajectories,
 - nearly circular trajectories,
-- floating-point comparison around \(e=1\),
-- division by very small energy when calculating \(a\),
+- floating-point comparison around $e=1$,
+- division by very small energy when calculating $a$,
 - extreme eccentricity,
 - integration too close to the singularity,
 - invalid state-vector dimensions,
@@ -1638,9 +1638,9 @@ Avoid silently returning physically meaningless quantities.
 
 For example, if
 
-\[
+$$
 |\varepsilon|
-\]
+$$
 
 is numerically indistinguishable from zero, classify the state as approximately parabolic rather than calculating an enormous finite semi-major axis and treating it as reliable.
 
@@ -1652,45 +1652,45 @@ Document all conventions clearly.
 
 Recommended 2-D state:
 
-\[
+$$
 [x,y,v_x,v_y].
-\]
+$$
 
 Recommended 3-D state:
 
-\[
+$$
 [x,y,z,v_x,v_y,v_z].
-\]
+$$
 
 Recommended central body location:
 
-\[
+$$
 \mathbf r=(0,0)
-\]
+$$
 
 or
 
-\[
+$$
 \mathbf r=(0,0,0).
-\]
+$$
 
 Recommended default orbital plane:
 
-\[
+$$
 z=0.
-\]
+$$
 
 For the standard tangential-launch experiments, use:
 
-\[
+$$
 \mathbf r_0=(r_0,0)
-\]
+$$
 
 and
 
-\[
+$$
 \mathbf v_0=(0,v_0).
-\]
+$$
 
 This makes periapsis orientation and conic plots easy to interpret.
 
@@ -1729,9 +1729,9 @@ After the two-body framework is solid, add:
 src/orbitworks/nbody.py
 ```
 
-For body \(i\),
+For body $i$,
 
-\[
+$$
 \boxed{
 \ddot{\mathbf r}_i
 =
@@ -1744,7 +1744,7 @@ m_j
 |\mathbf r_j-\mathbf r_i|^3
 }
 }
-\]
+$$
 
 Implement:
 
@@ -1768,9 +1768,9 @@ Only later should it be used for a solar-system mock-up.
 
 The initial treatment assumes
 
-\[
+$$
 M\gg m
-\]
+$$
 
 and places the central body at rest.
 
@@ -1778,29 +1778,29 @@ A useful later extension is the exact two-body formulation.
 
 Define relative position:
 
-\[
+$$
 \mathbf r
 =
 \mathbf r_2-\mathbf r_1.
-\]
+$$
 
 The relative motion obeys
 
-\[
+$$
 \boxed{
 \ddot{\mathbf r}
 =
 -\frac{G(M+m)}{r^3}\mathbf r
 }
-\]
+$$
 
 so the effective gravitational parameter is
 
-\[
+$$
 \boxed{
 \mu=G(M+m)
 }
-\]
+$$
 
 The two bodies orbit their common center of mass.
 
@@ -1814,20 +1814,20 @@ A useful future extension would be orbital maneuvers.
 
 Potential topics:
 
-- impulsive \(\Delta v\),
+- impulsive $\Delta v$,
 - Hohmann transfer,
 - plane change,
 - escape injection,
 - capture,
 - transfer time.
 
-For a Hohmann transfer between circular radii \(r_1\) and \(r_2\), the transfer ellipse has
+For a Hohmann transfer between circular radii $r_1$ and $r_2$, the transfer ellipse has
 
-\[
+$$
 a_t
 =
 \frac{r_1+r_2}{2}.
-\]
+$$
 
 Vis-viva can then be used to derive the required burn velocities.
 
@@ -1840,7 +1840,7 @@ This should not be part of the first implementation phase but fits naturally aft
 Potential later additions include:
 
 - atmospheric drag,
-- oblateness and \(J_2\),
+- oblateness and $J_2$,
 - third-body perturbations,
 - solar radiation pressure,
 - relativistic perihelion precession,
@@ -1998,7 +1998,7 @@ Recover Kepler's empirical laws directly from Newtonian mechanics.
 Implement:
 
 - scaling utilities,
-- canonical \(\mu=1\), \(r_0=1\) experiments,
+- canonical $\mu=1$, $r_0=1$ experiments,
 - velocity-ratio sweep.
 
 Goal:
@@ -2087,11 +2087,11 @@ Use the following as the main implementation checklist.
 - [ ] Verify Kepler's second law numerically
 - [ ] Visualize equal swept areas
 - [ ] Verify Kepler's third law numerically
-- [ ] Plot \(T^2\) versus \(a^3\)
+- [ ] Plot $T^2$ versus $a^3$
 - [ ] Implement nondimensional scaling
-- [ ] Implement canonical \(\mu=1\) experiments
-- [ ] Sweep \(v/v_c\) across orbital regimes
-- [ ] Verify \(e=v^2-1\) for nondimensional tangential launch with \(v>1\)
+- [ ] Implement canonical $\mu=1$ experiments
+- [ ] Sweep $v/v_c$ across orbital regimes
+- [ ] Verify $e=v^2-1$ for nondimensional tangential launch with $v>1$
 - [ ] Add simple RK4 integrator
 - [ ] Add leapfrog or velocity Verlet integrator
 - [ ] Compare integrator accuracy
@@ -2102,7 +2102,7 @@ Use the following as the main implementation checklist.
 - [ ] Add compact equation reference
 - [ ] Add experiment descriptions
 - [ ] Create Streamlit orbit explorer
-- [ ] Add \(v/v_c\) interactive slider
+- [ ] Add $v/v_c$ interactive slider
 - [ ] Display live orbital elements
 - [ ] Display analytical/numerical overlay in app
 - [ ] Add conservation plots to app
@@ -2127,39 +2127,39 @@ If development time is limited, prioritize these experiments above all others.
 
 Plot:
 
-\[
+$$
 v_c(r)
 =
 \sqrt{\frac{\mu}{r}}
-\]
+$$
 
 and
 
-\[
+$$
 v_{\mathrm{esc}}(r)
 =
 \sqrt{\frac{2\mu}{r}}.
-\]
+$$
 
 Show explicitly that:
 
-\[
+$$
 \frac{v_{\mathrm{esc}}}{v_c}
 =
 \sqrt{2}.
-\]
+$$
 
 ### Experiment 2 — eccentricity sweep
 
 Plot:
 
-\[
+$$
 r
 =
 \frac{p}{1+e\cos\theta}
-\]
+$$
 
-for several values of \(e\).
+for several values of $e$.
 
 This gives the cleanest geometric view of conic classification.
 
@@ -2167,13 +2167,13 @@ This gives the cleanest geometric view of conic classification.
 
 At fixed radius, vary
 
-\[
+$$
 v/v_c.
-\]
+$$
 
 Show the transition:
 
-\[
+$$
 \text{sub-circular ellipse}
 \rightarrow
 \text{circle}
@@ -2183,17 +2183,17 @@ Show the transition:
 \text{parabola}
 \rightarrow
 \text{hyperbola}.
-\]
+$$
 
 ### Experiment 4 — analytical versus ODE solution
 
 Overlay the conic solution with the numerical integration of
 
-\[
+$$
 \ddot{\mathbf r}
 =
 -\frac{\mu}{r^3}\mathbf r.
-\]
+$$
 
 This is arguably the most important computational demonstration in the repository.
 
@@ -2201,15 +2201,15 @@ This is arguably the most important computational demonstration in the repositor
 
 Plot numerical error in:
 
-\[
+$$
 \varepsilon
-\]
+$$
 
 and
 
-\[
+$$
 h.
-\]
+$$
 
 This turns the repository from a visualization exercise into a numerical-mechanics laboratory.
 
@@ -2221,21 +2221,21 @@ Numerically demonstrate Kepler's second law for a visibly eccentric orbit.
 
 Generate multiple orbits and verify:
 
-\[
+$$
 T^2\propto a^3.
-\]
+$$
 
 ### Experiment 8 — nondimensional universal orbit
 
 Set:
 
-\[
+$$
 \mu=1,
 \qquad
 r_0=1,
 \qquad
 v_c=1.
-\]
+$$
 
 Sweep initial velocity and classify the resulting conic.
 
@@ -2304,7 +2304,7 @@ Where a result can be derived from earlier equations, prefer deriving and verify
 
 The central conceptual chain that the repository should preserve is:
 
-\[
+$$
 \boxed{
 \text{Newtonian gravitation}
 \rightarrow
@@ -2318,6 +2318,6 @@ The central conceptual chain that the repository should preserve is:
 \rightarrow
 \text{numerical verification}
 }
-\]
+$$
 
 This should remain the organizing principle of the entire project.
