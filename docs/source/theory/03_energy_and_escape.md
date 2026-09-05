@@ -6,10 +6,10 @@ to distinguish these cases.
 
 ## What happens when the tangential speed differs from circular speed
 
-At a given radius $r$,
+At a given radius $r$ from a central body of mass $M$,
 
 $$
-v_c=\sqrt{\frac{\mu}{r}}.
+v_c=\sqrt{\frac{GM}{r}}.
 $$
 
 If the object has exactly this tangential speed, the orbit is circular.
@@ -23,7 +23,7 @@ $$
 =
 \frac{g}{v^2}
 =
-\frac{\mu/r^2}{v^2}.
+\frac{GM}{r^2v^2}.
 $$
 
 For circular motion,
@@ -41,7 +41,7 @@ $$
 then
 
 $$
-\frac{\mu}{r^2v^2}
+\frac{GM}{r^2v^2}
 <
 \frac{1}{r},
 $$
@@ -70,7 +70,7 @@ $$
 =
 \frac{v^2}{2}
 -
-\frac{\mu}{r}
+\frac{GM}{r}
 }
 $$
 
@@ -81,7 +81,7 @@ At the threshold of escape, the body reaches infinity with zero remaining speed.
 At infinity,
 
 $$
-\frac{\mu}{r}\rightarrow 0
+\frac{GM}{r}\rightarrow 0
 $$
 
 and
@@ -101,7 +101,7 @@ Set
 $$
 \frac{v_{\mathrm{esc}}^2}{2}
 -
-\frac{\mu}{r}
+\frac{GM}{r}
 =
 0.
 $$
@@ -111,7 +111,7 @@ Then
 $$
 \frac{v_{\mathrm{esc}}^2}{2}
 =
-\frac{\mu}{r}.
+\frac{GM}{r}.
 $$
 
 Hence,
@@ -120,14 +120,14 @@ $$
 \boxed{
 v_{\mathrm{esc}}
 =
-\sqrt{\frac{2\mu}{r}}
+\sqrt{\frac{2GM}{r}}
 }
 $$
 
 Since
 
 $$
-v_c=\sqrt{\frac{\mu}{r}},
+v_c=\sqrt{\frac{GM}{r}},
 $$
 
 we obtain
@@ -162,25 +162,19 @@ $$
 v=v_c
 $$
 
-gives a circular orbit.
-
-If
+gives a circular orbit. In cases when:
 
 $$
 v_c<v<v_{\mathrm{esc}},
 $$
 
-the object initially moves outward but remains gravitationally bound. Its orbit is an ellipse.
-
-If
+the object initially moves outward but remains gravitationally bound. Its orbit is an ellipse. If, on the other hand:
 
 $$
 v=v_{\mathrm{esc}},
 $$
 
-the orbit is parabolic.
-
-If
+the orbit is parabolic. Finally, if:
 
 $$
 v>v_{\mathrm{esc}},
@@ -196,5 +190,6 @@ $$
 
 the object initially curves inward more sharply than the local circle. In an ideal point-mass problem this is also an elliptical orbit, but if the launch occurs from a planetary surface, the ellipse may intersect the body.
 
-The exact classification becomes especially clear once the general conic solution is derived.
+The general conic solution and the exact classification of orbital trajectories
+are derived in {doc}`05_conic_orbits`.
 

@@ -11,7 +11,7 @@ Newtonian gravity gives the orbital differential equation
 $$
 u''+u
 =
-\frac{\mu}{h^2}.
+\frac{GM}{\ell^2}.
 $$
 
 Its solution is
@@ -69,7 +69,7 @@ $$
 Hence angular momentum is constant:
 
 $$
-h=r^2\dot\theta.
+\ell=r^2\dot\theta.
 $$
 
 The areal velocity is
@@ -86,7 +86,7 @@ $$
 \boxed{
 \frac{dA}{dt}
 =
-\frac{h}{2}
+\frac{\ell}{2}
 =
 \mathrm{constant}
 }
@@ -111,7 +111,7 @@ From Kepler's second law,
 $$
 \frac{dA}{dt}
 =
-\frac{h}{2}.
+\frac{\ell}{2}.
 $$
 
 Over one complete orbital period $T$, the entire ellipse is swept out.
@@ -121,7 +121,7 @@ Thus,
 $$
 \pi ab
 =
-\frac{h}{2}T.
+\frac{\ell}{2}T.
 $$
 
 Therefore,
@@ -129,7 +129,7 @@ Therefore,
 $$
 T
 =
-\frac{2\pi ab}{h}.
+\frac{2\pi ab}{\ell}.
 $$
 
 For an ellipse,
@@ -145,13 +145,13 @@ T
 =
 \frac{
 2\pi a^2\sqrt{1-e^2}
-}{h}.
+}{\ell}.
 $$
 
 We also have
 
 $$
-p=\frac{h^2}{\mu}
+p=\frac{\ell^2}{GM}
 $$
 
 and
@@ -163,7 +163,7 @@ $$
 Therefore,
 
 $$
-\frac{h^2}{\mu}
+\frac{\ell^2}{GM}
 =
 a(1-e^2).
 $$
@@ -171,18 +171,18 @@ $$
 Hence,
 
 $$
-h^2
+\ell^2
 =
-\mu a(1-e^2).
+GM a(1-e^2).
 $$
 
 Taking the positive root,
 
 $$
-h
+\ell
 =
 \sqrt{
-\mu a(1-e^2)
+GM a(1-e^2)
 }.
 $$
 
@@ -195,7 +195,7 @@ T
 2\pi a^2\sqrt{1-e^2}
 }{
 \sqrt{
-\mu a(1-e^2)
+GM a(1-e^2)
 }
 }.
 $$
@@ -208,16 +208,16 @@ T
 \frac{
 2\pi a^2
 }{
-\sqrt{\mu a}
+\sqrt{GM a}
 }.
 $$
 
 Since
 
 $$
-\sqrt{\mu a}
+\sqrt{GM a}
 =
-\sqrt{\mu}\sqrt{a},
+\sqrt{GM}\sqrt{a},
 $$
 
 we obtain
@@ -226,7 +226,7 @@ $$
 T
 =
 2\pi
-\frac{a^{3/2}}{\sqrt{\mu}}.
+\frac{a^{3/2}}{\sqrt{GM}}.
 $$
 
 Therefore,
@@ -235,25 +235,11 @@ $$
 \boxed{
 T
 =
-2\pi\sqrt{\frac{a^3}{\mu}}
+2\pi\sqrt{\frac{a^3}{GM}}
 }
 $$
 
 and hence
-
-$$
-\boxed{
-T^2
-=
-\frac{4\pi^2}{\mu}a^3
-}
-$$
-
-Since
-
-$$
-\mu=GM,
-$$
 
 $$
 \boxed{
@@ -401,7 +387,7 @@ Specific angular momentum:
 
 $$
 \boxed{
-h=r^2\dot\theta
+\ell=r^2\dot\theta
 }
 $$
 
@@ -411,7 +397,7 @@ $$
 \boxed{
 \frac{dA}{dt}
 =
-\frac{h}{2}
+\frac{\ell}{2}
 }
 $$
 
@@ -423,7 +409,7 @@ $$
 =
 \frac{v^2}{2}
 -
-\frac{\mu}{r}
+\frac{GM}{r}
 }
 $$
 
@@ -433,9 +419,9 @@ $$
 \boxed{
 V_{\mathrm{eff}}(r)
 =
-\frac{h^2}{2r^2}
+\frac{\ell^2}{2r^2}
 -
-\frac{\mu}{r}
+\frac{GM}{r}
 }
 $$
 
@@ -445,7 +431,7 @@ $$
 \boxed{
 u''+u
 =
-\frac{\mu}{h^2}
+\frac{GM}{\ell^2}
 }
 $$
 
@@ -465,7 +451,7 @@ $$
 \boxed{
 p
 =
-\frac{h^2}{\mu}
+\frac{\ell^2}{GM}
 =
 a(1-e^2)
 }
@@ -491,7 +477,7 @@ $$
 \boxed{
 v^2
 =
-\mu
+GM
 \left(
 \frac{2}{r}
 -
@@ -506,7 +492,7 @@ $$
 \boxed{
 \varepsilon
 =
--\frac{\mu}{2a}
+-\frac{GM}{2a}
 }
 $$
 
@@ -516,7 +502,7 @@ $$
 \boxed{
 e^2
 =
-1+\frac{2\varepsilon h^2}{\mu^2}
+1+\frac{2\varepsilon \ell^2}{(GM)^2}
 }
 $$
 

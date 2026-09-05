@@ -4,422 +4,353 @@ Eliminating time from the radial equation turns the dynamical problem into an
 equation for the orbit's shape. Its solutions are the familiar conic sections:
 circles, ellipses, parabolas, and hyperbolas.
 
-## Reduction of the orbital equation using $u=1/r$
+## Reduction of the orbital equation with a change of variable
 
-Return to the radial equation:
+Return to the radial equation,
 
 $$
 \ddot r-r\dot\theta^2
 =
--\frac{\mu}{r^2}.
+-\frac{GM}{r^2}.
 $$
 
-We want an equation directly for the shape of the trajectory $r(\theta)$, eliminating time.
+We first eliminate time and derive an equation directly for the orbit
+$r(\theta)$. The reciprocal-radius substitution will be introduced only after
+that equation has been obtained.
 
-Define
-
-$$
-\boxed{
-u(\theta)=\frac{1}{r}
-}
-$$
-
-so
+Treat $r$ as a function of $\theta$. From conservation of angular
+momentum,
 
 $$
-r=\frac{1}{u}.
+\dot\theta=\frac{\ell}{r^2}.
 $$
 
-Angular momentum conservation gives
-
-$$
-r^2\dot\theta=h.
-$$
-
-Since
-
-$$
-r=\frac{1}{u},
-$$
-
-we have
-
-$$
-r^2=\frac{1}{u^2}.
-$$
-
-Hence,
-
-$$
-\frac{1}{u^2}\dot\theta=h,
-$$
-
-so
-
-$$
-\boxed{
-\dot\theta=hu^2
-}
-$$
-
-Now calculate $\dot r$.
-
-Because
-
-$$
-r=\frac{1}{u},
-$$
-
-$$
-\frac{dr}{d\theta}
-=
--\frac{1}{u^2}\frac{du}{d\theta}.
-$$
-
-Write
-
-$$
-u'=\frac{du}{d\theta}.
-$$
-
-Then
-
-$$
-\frac{dr}{d\theta}
-=
--\frac{u'}{u^2}.
-$$
-
-Using
+The chain rule then converts the first time derivative of $r$ into an angular
+derivative:
 
 $$
 \dot r
 =
-\frac{dr}{d\theta}\dot\theta,
-$$
-
-we get
-
-$$
-\dot r
+\frac{dr}{d\theta}\dot\theta
 =
--\frac{u'}{u^2}(hu^2).
+\frac{\ell}{r^2}\frac{dr}{d\theta}.
 $$
 
-Therefore,
+For the second time derivative, apply the same rule once more:
 
 $$
-\boxed{
-\dot r=-hu'
-}
-$$
-
-Differentiate with respect to time:
-
-$$
+\begin{aligned}
 \ddot r
-=
--h\frac{du'}{dt}.
-$$
-
-By the chain rule,
-
-$$
-\frac{du'}{dt}
-=
-\frac{du'}{d\theta}\dot\theta
-=
-u''\dot\theta.
-$$
-
-Since
-
-$$
-\dot\theta=hu^2,
-$$
-
-we obtain
-
-$$
-\boxed{
-\ddot r
-=
--h^2u^2u''
-}
-$$
-
-Now evaluate the term $r\dot\theta^2$:
-
-$$
-r\dot\theta^2
-=
-\frac{1}{u}(hu^2)^2.
-$$
-
-Therefore,
-
-$$
-\boxed{
-r\dot\theta^2
-=
-h^2u^3
-}
-$$
-
-Substitute these results into the radial equation:
-
-$$
--h^2u^2u''
+&=
+\frac{d}{dt}
+\left(
+\frac{\ell}{r^2}\frac{dr}{d\theta}
+\right) \\
+&=
+\dot\theta\frac{d}{d\theta}
+\left(
+\frac{\ell}{r^2}\frac{dr}{d\theta}
+\right) \\
+&=
+\frac{\ell^2}{r^2}
+\frac{d}{d\theta}
+\left(
+\frac{1}{r^2}\frac{dr}{d\theta}
+\right) \\
+&=
+\frac{\ell^2}{r^4}\frac{d^2r}{d\theta^2}
 -
-h^2u^3
+\frac{2\ell^2}{r^5}
+\left(
+\frac{dr}{d\theta}
+\right)^2.
+\end{aligned}
+$$
+
+The angular part of the radial acceleration is
+
+$$
+r\dot\theta^2
 =
--\mu u^2.
+\frac{\ell^2}{r^3}.
 $$
 
-Factor the left-hand side:
+Substitute these expressions into
 
 $$
--h^2u^2(u''+u)
-=
--\mu u^2.
+\ddot r-r\dot\theta^2=-\frac{GM}{r^2}
 $$
 
-Assuming $u\neq 0$, divide by $-u^2$:
-
-$$
-h^2(u''+u)=\mu.
-$$
-
-Hence,
+and multiply by $r^5/\ell^2$. The time-dependent radial equation becomes the
+following differential equation for the orbit $r(\theta)$:
 
 $$
 \boxed{
-u''+u
+r\frac{d^2r}{d\theta^2}
+-
+2\left(
+\frac{dr}{d\theta}
+\right)^2
+-
+r^2
 =
-\frac{\mu}{h^2}
-}
+-\frac{GM}{\ell^2}r^3
+}.
 $$
 
-This is Binet's equation for inverse-square gravity.
+This is a nonlinear second-order ODE for $r(\theta)$. It is nonlinear because
+the unknown function multiplies its own second derivative, the first
+derivative is squared, and powers such as $r^2$ and $r^3$ appear. In a linear
+ODE, the unknown function and each of its derivatives may occur only to the
+first power and may not be multiplied by one another.
+
+The structure of this equation motivates the reciprocal-radius substitution
+
+$$
+u(\theta)=\frac{1}{r(\theta)}
+,
+\qquad
+r(\theta)=\frac{1}{u(\theta)}.
+$$
+
+The required angular derivatives are
+
+$$
+\frac{dr}{d\theta}
+=
+-\frac{1}{u^2}\frac{du}{d\theta}
+$$
+
+and
+
+$$
+\frac{d^2r}{d\theta^2}
+=
+\frac{2}{u^3}
+\left(
+\frac{du}{d\theta}
+\right)^2
+-
+\frac{1}{u^2}\frac{d^2u}{d\theta^2}.
+$$
+
+Substitute these derivatives into the left-hand side of the nonlinear
+equation:
+
+$$
+\begin{aligned}
+r\frac{d^2r}{d\theta^2}
+-2\left(\frac{dr}{d\theta}\right)^2-r^2
+&=
+\frac{1}{u}
+\left[
+\frac{2}{u^3}
+\left(\frac{du}{d\theta}\right)^2
+-
+\frac{1}{u^2}\frac{d^2u}{d\theta^2}
+\right] \\
+&\quad
+-
+\frac{2}{u^4}
+\left(\frac{du}{d\theta}\right)^2
+-
+\frac{1}{u^2} \\
+&=
+-\frac{1}{u^3}\frac{d^2u}{d\theta^2}
+-
+\frac{1}{u^2}.
+\end{aligned}
+$$
+
+The two terms containing $(du/d\theta)^2$ cancel exactly. The right-hand side
+of the nonlinear equation becomes $-(GM/\ell^2)u^{-3}$, so the transformed
+equation is
+
+$$
+-\frac{1}{u^3}\frac{d^2u}{d\theta^2}
+-
+\frac{1}{u^2}
+=
+-\frac{GM}{\ell^2}\frac{1}{u^3}.
+$$
+
+Multiplying by $-u^3$ recovers Binet's linear equation,
+
+$$
+\boxed{
+\frac{d^2u}{d\theta^2}+u
+=
+\frac{GM}{\ell^2}
+}.
+$$
+
+This cancellation is the main reason the reciprocal radius $u=1/r$ is the
+natural variable for an inverse-square central force. It turns the nonlinear
+equation for $r(\theta)$ into a linear, constant-coefficient ODE for
+$u(\theta)$.
 
 ---
 
 ## Solution of the orbital differential equation
 
-We must solve
+Binet's equation is a linear differential equation with a constant
+right-hand side. Its general solution is
 
 $$
-u''+u
+u(\theta)
 =
-\frac{\mu}{h^2}.
+\frac{GM}{\ell^2}
++A\cos\theta
++B\sin\theta.
 $$
 
-The homogeneous equation is
-
-$$
-u_h''+u_h=0.
-$$
-
-Its solution is
-
-$$
-u_h
-=
-A\cos\theta
-+
-B\sin\theta.
-$$
-
-A constant particular solution is
-
-$$
-u_p=\frac{\mu}{h^2}.
-$$
-
-Therefore,
-
-$$
-u
-=
-\frac{\mu}{h^2}
-+
-A\cos\theta
-+
-B\sin\theta.
-$$
-
-The trigonometric terms can be combined into one shifted cosine:
+The two trigonometric terms can be written as a single shifted cosine,
 
 $$
 A\cos\theta+B\sin\theta
 =
-C\cos(\theta-\theta_0).
+C\cos(\theta-\theta_0),
 $$
 
-Thus,
+so
 
 $$
-u
+u(\theta)
 =
-\frac{\mu}{h^2}
-+
-C\cos(\theta-\theta_0).
+\frac{GM}{\ell^2}
++C\cos(\theta-\theta_0).
 $$
 
-Choose the angular origin so that periapsis occurs at
+The angle $\theta_0$ only determines the orientation of the orbit. Choose the
+angular origin at periapsis, so that $\theta_0=0$. The solution then becomes
 
 $$
-\theta=0.
-$$
-
-Then $\theta_0=0$, giving
-
-$$
-u
+u(\theta)
 =
-\frac{\mu}{h^2}
-+
-C\cos\theta.
-$$
-
-Factor out $\mu/h^2$:
-
-$$
-u
-=
-\frac{\mu}{h^2}
-\left[
+\frac{GM}{\ell^2}
+\left(
 1+
-\frac{Ch^2}{\mu}\cos\theta
-\right].
+\frac{C\ell^2}{GM}\cos\theta
+\right).
 $$
 
-Define the eccentricity
-
-$$
-\boxed{
-e=\frac{Ch^2}{\mu}
-}
-$$
-
-and define the semi-latus rectum
+The solution contains two combinations of constants that are useful to name.
+Define
 
 $$
 \boxed{
-p=\frac{h^2}{\mu}
-}
+e=\frac{C\ell^2}{GM}
+},
+\qquad
+\boxed{
+p=\frac{\ell^2}{GM}
+}.
 $$
 
-Then
+These definitions do not yet assume a particular orbit shape. The constant
+$C$ and the quantity $GM/\ell^2$ both have dimensions of inverse length, so
+$e$ is dimensionless. In contrast, $p$ has dimensions of length and sets the
+radial scale of the orbit.
 
-$$
-u
-=
-\frac{1}{p}
-(1+e\cos\theta).
-$$
-
-Since
-
-$$
-u=\frac{1}{r},
-$$
-
-we obtain
+Since $u=1/r$, these definitions put the solution in the compact form
 
 $$
 \boxed{
 r(\theta)
 =
 \frac{p}{1+e\cos\theta}
-}
+}.
 $$
 
-This is the polar equation of a conic section with the central mass at one focus.
+We can now identify the geometry rather than assume it. Take the central mass,
+located at the origin, as a **focus**, and use $x=r\cos\theta$. Rearranging the
+orbit equation gives
 
-This single equation contains circular, elliptical, parabolic, and hyperbolic trajectories.
+$$
+\begin{aligned}
+r(1+e\cos\theta)&=p, \\
+r+ex&=p, \\
+r&=e\left(\frac{p}{e}-x\right).
+\end{aligned}
+$$
+
+For $e>0$, the line $x=p/e$ is the **directrix**. On the branch described by
+the orbit equation, $p/e-x$ is the perpendicular distance from the orbiting
+body to this line. Thus,
+
+$$
+\boxed{
+\frac{\text{distance to the focus}}
+{\text{distance to the directrix}}
+=e
+}.
+$$
+
+A conic section is precisely a curve for which this ratio is constant. This
+is why $e$ is called the **eccentricity**: it is the focus-to-directrix distance
+ratio that determines whether the conic is a circle, ellipse, parabola, or
+hyperbola. When $e=0$, the orbit equation reduces directly to the circle
+$r=p$.
+
+The geometric meaning of $p$ follows by looking perpendicular to the orbit's
+symmetry axis. At $\theta=\pm\pi/2$,
+
+$$
+\cos\theta=0,
+\qquad
+r=p.
+$$
+
+The two corresponding points lie on the line through the focus perpendicular
+to the symmetry axis, one a distance $p$ above the focus and the other a
+distance $p$ below it. The chord joining them therefore has length $2p$:
+
+$$
+\boxed{
+\text{latus rectum}=2p
+},
+\qquad
+\boxed{
+\text{semi-latus rectum}=p
+}.
+$$
+
+The **latus rectum** is the chord through a focus that is parallel to the
+directrix, or equivalently perpendicular to the conic's symmetry axis. The
+historical New Latin term means "straight side"; *semi-* indicates that $p$
+is half the length of this chord.
+
+We have therefore derived, rather than presumed, that
+$r=p/(1+e\cos\theta)$ is the polar equation of a conic with the central mass
+at one focus. One equation describes every possible Keplerian orbit.
 
 ---
 
 ## Classification by eccentricity
 
-The orbit
+The eccentricity $e$ determines which conic section the trajectory follows.
 
-$$
-r(\theta)
-=
-\frac{p}{1+e\cos\theta}
-$$
+| Eccentricity | Trajectory | Character |
+| --- | --- | --- |
+| $e=0$ | Circle | Bound orbit with constant radius $r=p$ |
+| $0<e<1$ | Ellipse | Bound orbit |
+| $e=1$ | Parabola | Boundary between bound and unbound motion |
+| $e>1$ | Hyperbola | Unbound orbit |
 
-is classified by the eccentricity $e$.
-
-For
-
-$$
-\boxed{
-e=0
-}
-$$
-
-the radius is constant:
-
-$$
-r=p.
-$$
-
-The orbit is a circle.
-
-For
-
-$$
-\boxed{
-0<e<1
-}
-$$
-
-the orbit is an ellipse.
-
-For
-
-$$
-\boxed{
-e=1
-}
-$$
-
-the orbit is a parabola.
-
-For
-
-$$
-\boxed{
-e>1
-}
-$$
-
-the orbit is a hyperbola.
-
-Thus the inverse-square gravitational law naturally generates the family of conic sections.
+Thus, Newton's inverse-square gravitational law naturally generates the full
+family of conic sections.
 
 ---
 
 ## Conversion from polar conic form to Cartesian ellipse form
 
-For an elliptical orbit,
+For an elliptical orbit, $0<e<1$. Starting from
 
 $$
-0<e<1.
+r=\frac{p}{1+e\cos\theta},
 $$
 
-Begin with
-
-$$
-r
-=
-\frac{p}{1+e\cos\theta}.
-$$
-
-Use
+use
 
 $$
 x=r\cos\theta,
@@ -429,136 +360,30 @@ y=r\sin\theta,
 r=\sqrt{x^2+y^2}.
 $$
 
-From
+Multiplying the polar equation by its denominator gives $r+ex=p$.
+Substituting $r=\sqrt{x^2+y^2}$, squaring, and collecting terms produces
 
 $$
-r(1+e\cos\theta)=p,
+\begin{aligned}
+\sqrt{x^2+y^2}&=p-ex, \\
+x^2+y^2&=(p-ex)^2, \\
+(1-e^2)x^2+2epx+y^2&=p^2.
+\end{aligned}
 $$
 
-and
-
-$$
-r\cos\theta=x,
-$$
-
-we obtain
-
-$$
-r+ex=p.
-$$
-
-Thus,
-
-$$
-r=p-ex.
-$$
-
-Square both sides:
-
-$$
-x^2+y^2
-=
-(p-ex)^2.
-$$
-
-Expand:
-
-$$
-x^2+y^2
-=
-p^2-2epx+e^2x^2.
-$$
-
-Rearrange:
-
-$$
-(1-e^2)x^2
-+
-2epx
-+
-y^2
--
-p^2
-=
-0.
-$$
-
-Complete the square in $x$.
-
-Factor $1-e^2$:
-
-$$
-(1-e^2)
-\left[
-x^2
-+
-\frac{2ep}{1-e^2}x
-\right]
-+
-y^2
--
-p^2
-=
-0.
-$$
-
-Inside the brackets,
-
-$$
-x^2
-+
-\frac{2ep}{1-e^2}x
-=
-\left(
-x+\frac{ep}{1-e^2}
-\right)^2
--
-\left(
-\frac{ep}{1-e^2}
-\right)^2.
-$$
-
-Substitute:
+Completing the square in $x$ gives
 
 $$
 (1-e^2)
 \left(
 x+\frac{ep}{1-e^2}
 \right)^2
--
-(1-e^2)
-\left(
-\frac{ep}{1-e^2}
-\right)^2
-+
-y^2
--p^2
-=
-0.
-$$
-
-The constant term becomes
-
-$$
--\frac{e^2p^2}{1-e^2}-p^2
-=
--\frac{p^2}{1-e^2}.
-$$
-
-Hence,
-
-$$
-(1-e^2)
-\left(
-x+\frac{ep}{1-e^2}
-\right)^2
-+
-y^2
++y^2
 =
 \frac{p^2}{1-e^2}.
 $$
 
-Divide through by $p^2/(1-e^2)$:
+After dividing by the right-hand side,
 
 $$
 \frac{
@@ -569,54 +394,38 @@ x+\frac{ep}{1-e^2}
 \frac{p^2}{(1-e^2)^2}
 }
 +
-\frac{
-y^2
-}{
+\frac{y^2}{
 \frac{p^2}{1-e^2}
 }
 =
 1.
 $$
 
-Define
+Define the semi-major axis $a$ and semi-minor axis $b$ as
 
 $$
 \boxed{
 a=\frac{p}{1-e^2}
-}
-$$
-
-and
-
-$$
+},
+\qquad
 \boxed{
 b=\frac{p}{\sqrt{1-e^2}}
-}
+}.
 $$
 
-Then
-
-$$
-b^2=a^2(1-e^2),
-$$
-
-so
-
-$$
-\boxed{
-b=a\sqrt{1-e^2}
-}
-$$
-
-and
+These definitions imply
 
 $$
 \boxed{
 p=a(1-e^2)
-}
+},
+\qquad
+\boxed{
+b=a\sqrt{1-e^2}
+}.
 $$
 
-The Cartesian equation becomes
+The Cartesian equation is therefore
 
 $$
 \boxed{
@@ -625,128 +434,62 @@ $$
 \frac{y^2}{b^2}
 =
 1
-}
+}.
 $$
 
-The center of the ellipse is displaced from the focus by the distance
+The ellipse is centered at $x=-ae$, while the central mass remains at the
+origin. Thus, the distance from the center to the focus is
 
 $$
 \boxed{
 c=ae
-}
+}.
 $$
 
-The central mass lies at one focus, not at the geometrical center of the ellipse.
-
-This is Kepler's first law.
+The central mass lies at a focus rather than at the geometrical center of the
+ellipse. This is Kepler's first law.
 
 ---
 
 ## Periapsis and apoapsis
 
-For
+For the orbit
 
 $$
-r(\theta)
-=
-\frac{p}{1+e\cos\theta},
+r(\theta)=\frac{p}{1+e\cos\theta},
 $$
 
-the minimum radius occurs at
-
-$$
-\theta=0,
-$$
-
-where
-
-$$
-\cos\theta=1.
-$$
-
-Thus,
+the smallest radius occurs at $\theta=0$, where $\cos\theta=1$, and the largest
+radius occurs at $\theta=\pi$, where $\cos\theta=-1$. Therefore,
 
 $$
 \boxed{
 r_p=\frac{p}{1+e}
-}
-$$
-
-This is the periapsis radius.
-
-For an orbit around the Sun, this is called perihelion.
-
-The maximum radius occurs at
-
-$$
-\theta=\pi,
-$$
-
-where
-
-$$
-\cos\theta=-1.
-$$
-
-Therefore,
-
-$$
+},
+\qquad
 \boxed{
 r_a=\frac{p}{1-e}
-}
+}.
 $$
 
-This is the apoapsis radius.
-
-For an orbit around the Sun, this is called aphelion.
-
-Using
-
-$$
-p=a(1-e^2),
-$$
-
-we get
-
-$$
-r_p
-=
-\frac{a(1-e^2)}{1+e}
-=
-a(1-e),
-$$
-
-so
+For an orbit around the Sun, these points are called perihelion and aphelion,
+respectively. Using $p=a(1-e^2)$ makes their relation to the semi-major axis
+explicit:
 
 $$
 \boxed{
 r_p=a(1-e)
-}
-$$
-
-Similarly,
-
-$$
-r_a
-=
-\frac{a(1-e^2)}{1-e}
-=
-a(1+e),
-$$
-
-so
-
-$$
+},
+\qquad
 \boxed{
 r_a=a(1+e)
-}
+}.
 $$
 
-Therefore,
+Adding these two radii gives
 
 $$
 \boxed{
 a=\frac{r_p+r_a}{2}
-}
+}.
 $$
-
