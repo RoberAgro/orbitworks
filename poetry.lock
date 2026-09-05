@@ -3579,4 +3579,4 @@ tzlocal = {version = ">=4.0", markers = "sys_platform != \"darwin\" and sys_plat
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "ef5f54282edb282a56624ebd1a6726275ceb4a2d84dbdca18433b736c2f71e7c"
+content-hash = "d479e4f9e84129491ae61f3278d570b8970bae0826ff3be34401d25c958a10a4"
