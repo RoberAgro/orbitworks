@@ -21,7 +21,7 @@ from orbitworks.graphics_mpl import set_plot_options
 # Approximate J2000 Earth--Moon-barycenter elements from JPL.
 EARTH_SEMI_MAJOR_AXIS = 1.00000261 * AU
 EARTH_ECCENTRICITY = 0.01671123
-EARTH_ECCENTRICITY = 1.00
+# EARTH_ECCENTRICITY = 1.00
 
 
 # User configuration.

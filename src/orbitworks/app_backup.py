@@ -5,21 +5,21 @@ This module and its adjacent assets are the current application. For a local
 launcher that also opens the browser, use ``orbitworks.launch_app()``.
 """
 
-from math import hypot, sqrt
+from math import hypot, pi, sqrt
 from pathlib import Path
 from uuid import uuid4
 
 import numpy as np
 from dash import ClientsideFunction, Dash, Input, Output, dcc, html
+from scipy.integrate import solve_ivp
+from scipy.optimize import brentq
 
-from orbitworks import analytical, propagation
 from orbitworks.constants import MU_EARTH, R_EARTH, YEAR
 
 # SI constants; launch controls measure x/y in Earth radii and speed in local vc.
 HOST = "127.0.0.1"
 PORT = 8054
 DEBUG = False
-MU = 1.0  # Nondimensional gravitational parameter; length is scaled by R_EARTH.
 POSITION_LIMIT = 10000.0
 OUTER_RADIUS = 100000.0  # Earth radii; comfortably beyond all launch positions.
 MAXIMUM_FLIGHT_TIME = 1000.0 * YEAR
@@ -28,7 +28,6 @@ MAXIMUM_SPEED_RATIO = 3.0
 MAXIMUM_PLAYBACK_RATE = 1e10
 RELATIVE_TOLERANCE = 1e-10
 ABSOLUTE_TOLERANCE = 1e-12
-ENERGY_CLASSIFICATION_TOLERANCE = 1e-12
 SAMPLE_COUNT = 3000
 TIME_UNIT = sqrt(R_EARTH**3 / MU_EARTH)
 SPEED_UNIT = sqrt(MU_EARTH / R_EARTH)
@@ -40,12 +39,48 @@ DEFAULTS = {
     "rate": 2000.0,
 }
 
-ORBIT_TYPE_LABELS = {
-    "circle": "Circular",
-    "ellipse": "Elliptical",
-    "parabola": "Parabolic",
-    "hyperbola": "Hyperbolic",
-}
+
+def gravity_equations(time, state):
+    """Evaluate dr/dt=v and dv/dt=-r/|r|^3 with GM=1 in scaled coordinates.
+
+    Length is scaled by Earth's radius and time by sqrt(R^3/GM), as in the
+    previous versions. DOP853 chooses its internal steps adaptively.
+    """
+    radius = np.linalg.norm(state[:2])
+    return np.concatenate((state[2:], -state[:2] / radius**3))
+
+
+def impact_event(time, state):
+    """Stop at the first inward crossing of Earth's surface."""
+    return np.linalg.norm(state[:2]) - 1.0
+
+
+impact_event.terminal = True
+impact_event.direction = -1
+
+
+def outer_event(time, state):
+    """Stop at the game boundary; this does not imply positive orbital energy."""
+    return np.linalg.norm(state[:2]) - OUTER_RADIUS
+
+
+outer_event.terminal = True
+outer_event.direction = 1
+
+
+def periapsis_event(time, state):
+    """Locate an inward-to-outward radial turn for a predicted colliding orbit.
+
+    A grazing trajectory can cross the surface twice within one large solver
+    step. Its radial turn brackets the first impact even if the ordinary
+    impact event misses that short interval. Using this event avoids imposing
+    a tiny global step on flights starting thousands of Earth radii away.
+    """
+    return np.dot(state[:2], state[2:])
+
+
+periapsis_event.terminal = True
+periapsis_event.direction = 1
 
 
 def compute_positioned_flight(x, y, speed_ratio, angle):
@@ -56,11 +91,10 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
     Its direction is independent of the launcher's position.
     The ratio is preserved while positioning the launcher, not the SI speed.
 
-    Orbital elements, classification, and the numerical propagation itself
-    come from ``orbitworks.analytical`` and ``orbitworks.propagation``, in
-    nondimensional units (mu=1, length in Earth radii). A completed bound
-    orbit can replay its numerical period; impacts, boundary stops, and time
-    caps cannot.
+    In dimensionless variables, energy=|v|^2/2-1/r, ell=x*vy-y*vx, and
+    e_vector=(|v|^2-1/r)*r_vector-(r_vector.v)*v. Negative energy gives
+    a=-1/(2*energy) and T=2*pi*a^(3/2). A completed bound orbit can replay
+    its numerical period; impacts, boundary stops, and time caps cannot.
     """
     values = (x, y, speed_ratio, angle)
     if any(v is None for v in values) or not np.all(np.isfinite(values)):
@@ -77,45 +111,50 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
             "Use a speed ratio from 0 to 3 and an angle from −180° to 180°."
         )
     alpha = np.deg2rad(angle)
-    position = np.array([x, y])
     velocity = speed_ratio / sqrt(radius) * np.array([np.cos(alpha), np.sin(alpha)])
-    state = np.concatenate((position, velocity))
-
-    elements = analytical.classify_orbit(
-        position,
-        velocity,
-        MU,
-        energy_tolerance=ENERGY_CLASSIFICATION_TOLERANCE,
-    )
-    ell = elements.specific_angular_momentum
-    parabolic = elements.orbit_type == "parabola"
-    bound = elements.is_bound
-    period = elements.period
+    state = np.concatenate(([x, y], velocity))
+    energy = float(np.dot(velocity, velocity) / 2 - 1 / radius)
+    ell = x * velocity[1] - y * velocity[0]
+    eccentricity_vector = (np.dot(velocity, velocity) - 1 / radius) * state[
+        :2
+    ] - np.dot(state[:2], velocity) * velocity
+    eccentricity = float(np.linalg.norm(eccentricity_vector))
+    parabolic = abs(energy) < 1e-12 / radius
+    bound = energy < 0 and not parabolic
+    axis = -1 / (2 * energy) if not parabolic else None
+    period = 2 * pi * axis**1.5 if bound else None
     if abs(ell) < 1e-10:
         orbit_type = "Radial · " + ("bound" if bound else "unbound")
     else:
-        orbit_type = ORBIT_TYPE_LABELS[elements.orbit_type]
-    periapsis = analytical.periapsis_distance(elements)
-    apoapsis = analytical.apoapsis_distance(elements)
-
+        orbit_type = (
+            "Parabolic"
+            if parabolic
+            else (
+                ("Circular" if eccentricity < 1e-8 else "Elliptical")
+                if bound
+                else "Hyperbolic"
+            )
+        )
+    periapsis = ell**2 / (1 + eccentricity)
     time_cap = MAXIMUM_FLIGHT_TIME / TIME_UNIT
     duration = min(period, time_cap) if bound else time_cap
-    events = [
-        propagation.make_collision_event(1.0),
-        propagation.make_escape_event(OUTER_RADIUS),
-    ]
+    events = [impact_event, outer_event]
     # No radial turn is needed for a zero-angular-momentum impact: the normal
     # event is reached before the point-mass singularity.
     if periapsis < 1 and abs(ell) > 1e-10:
-        events.append(propagation.make_periapsis_turn_event())
-    result = propagation.propagate(
+        events.append(periapsis_event)
+    result = solve_ivp(
+        gravity_equations,
+        (0, duration),
         state,
-        MU,
-        duration,
-        events=events,
+        method="DOP853",
         rtol=RELATIVE_TOLERANCE,
         atol=ABSOLUTE_TOLERANCE,
+        dense_output=True,
+        events=events,
     )
+    if not result.success:
+        raise ValueError(f"Integration could not finish: {result.message}")
     end_time = result.t[-1]
     if result.t_events[0].size:
         outcome = "impact"
@@ -128,7 +167,9 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
             raise ValueError(
                 "This grazing contact is below numerical resolution; adjust the angle slightly."
             )
-        end_time = propagation.refine_radius_crossing(result.sol, 1.0, (0, end_time))
+        end_time = brentq(
+            lambda t: np.linalg.norm(result.sol(t)[:2]) - 1, 0, end_time, xtol=1e-12
+        )
         outcome = "impact"
     else:
         outcome = "orbiting" if bound and period <= time_cap else "time limit"
@@ -138,17 +179,14 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
         )
     )
     states = result.sol(time).T
-    energy_error = analytical.energy_error(
-        states[:, :2],
-        states[:, 2:],
-        MU,
-        elements,
-        scale=(1.0 / radius if parabolic else None),
+    energies = np.sum(states[:, 2:] ** 2, axis=1) / 2 - 1 / np.linalg.norm(
+        states[:, :2], axis=1
     )
+    energy_scale = 1 / radius if parabolic else abs(energy)
     return {
         "id": uuid4().hex,
         "orbit_type": orbit_type,
-        "eccentricity": elements.eccentricity,
+        "eccentricity": eccentricity,
         "outcome": outcome,
         "repeat": outcome == "orbiting",
         "duration": float(end_time * TIME_UNIT),
@@ -160,9 +198,9 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
         "angle": angle,
         "altitude": (radius - 1) * R_EARTH / 1000,
         "periapsis": float(periapsis),
-        "apoapsis": float(apoapsis) if apoapsis is not None else None,
-        "specific_energy": elements.specific_energy * SPEED_UNIT**2,
-        "energy_error": float(np.max(energy_error)),
+        "apoapsis": float(axis * (1 + eccentricity)) if bound else None,
+        "specific_energy": energy * SPEED_UNIT**2,
+        "energy_error": float(100 * np.max(np.abs(energies - energy)) / energy_scale),
         "energy_normalization": "GM/r₀" if parabolic else "|initial energy|",
         "time": (time * TIME_UNIT).tolist(),
         "x": states[:, 0].tolist(),

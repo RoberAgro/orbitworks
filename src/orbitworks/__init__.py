@@ -1,5 +1,7 @@
 """Public package interface for the OrbitWorks orbital-mechanics laboratory."""
 
+__version__ = "0.1.0"
+
 
 def launch_app(debug=False, open_browser=True):
     """Run the local app, optionally opening its page in the default browser.
