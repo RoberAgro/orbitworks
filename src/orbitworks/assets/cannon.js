@@ -491,7 +491,7 @@
             const timeout=setTimeout(()=>controller.abort(),1500);
             try {
                 const response=await fetch("/health",{cache:"no-store",signal:controller.signal});
-                if(!response.ok || (await response.json()).app!=="orbitworks-v5") throw Error("Server unavailable");
+                if(!response.ok || (await response.json()).app!=="orbitworks") throw Error("Server unavailable");
                 this.advance(performance.now());
                 const reconnecting=this.connection==="disconnected";
                 this.connection="connected";
