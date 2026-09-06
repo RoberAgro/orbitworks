@@ -4,7 +4,7 @@
 
 From the repository root, after `poetry install`:
 
-```powershell
+```bash
 poetry run python tests/run_suite.py
 ```
 
@@ -12,7 +12,7 @@ The script discovers the complete `tests/` directory and preserves pytest's
 exit code. It uses its own location to find the repository, so an IDE or an
 absolute-path invocation from another directory works too. Use the project's
 Python environment; the runner does not install dependencies. These tests
-include physics, Dash callbacks/assets, version consistency and the local
+include physics, Dash callbacks/assets, workflow configuration and the local
 launcher, but do not constitute a complete visual/browser test suite.
 
 ## What triggers testing and deployment
@@ -26,10 +26,14 @@ launcher, but do not constitute a complete visual/browser test suite.
 
 `.github/workflows/test_and_deploy_app.yaml` uses Python 3.13 and Poetry 2.1.2.
 Both platforms install `poetry.lock` dependencies and call the same test script.
-The Render job depends on the whole test matrix. It then verifies that the tag
-matches the package version and the tagged commit is an ancestor of `main`.
-It sends the checked-out commit SHA explicitly, preventing a later unrelated
-push from changing which code Render is asked to deploy.
+The Render job depends on the whole test matrix. After both platforms pass,
+it uses a short curl command to request deployment through the secret Render
+hook. It sends the checked-out commit SHA explicitly, preventing a later
+unrelated push from changing which code Render is asked to deploy.
+
+The workflow deliberately does not validate tag/version equality or main-branch
+ancestry. Create release tags from main using bumpversion as described below.
+Any pushed `app-v*` tag is eligible for deployment if its tests pass.
 
 Deployment requests are serialized. GitHub does not guarantee chronological
 execution of queued releases: avoid pushing several release tags at once.
@@ -77,8 +81,8 @@ values together:
 - `__version__` in `src/orbitworks/__init__.py`.
 
 `docs/conf.py` imports `orbitworks.__version__` for its Sphinx `release`, so the
-documentation does not have a separate hardcoded version. Tests detect drift
-between the version sources. Bumpversion creates a release commit and an
+documentation does not have a separate hardcoded version. Use bumpversion to
+keep the version sources synchronized. It creates a release commit and an
 annotated tag named `app-v{new_version}`. The version number itself does not
 include the `app-v` prefix.
 
@@ -87,14 +91,14 @@ include the `app-v` prefix.
 Start on `main`, up to date with the remote, with all intended work committed
 and a clean working tree. Do not use `--allow-dirty` for an actual release.
 
-```powershell
-poetry run python scripts/run_tests.py
+```bash
+poetry run python tests/run_suite.py
 
 # 0.1.0 → 0.1.1, including the release commit and app-v0.1.1 tag:
 poetry run bumpversion patch
 
 # Check the resulting versioned state:
-poetry run python scripts/run_tests.py
+poetry run python tests/run_suite.py
 
 # Substitute the exact tag generated above for future releases:
 git push --atomic origin main app-v0.1.1
@@ -112,7 +116,7 @@ checks fail, do not force-move a published release tag; fix the problem and
 create a new patch release. A dry run previews the version change without a
 commit or tag:
 
-```powershell
+```bash
 poetry run bumpversion --dry-run --verbose patch
 ```
 

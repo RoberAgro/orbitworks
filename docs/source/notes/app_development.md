@@ -30,7 +30,7 @@ READMEs and review checklists.
 
 Run the current app from the repository root:
 
-```powershell
+```bash
 poetry install
 poetry run python scripts/launch_app.py
 ```

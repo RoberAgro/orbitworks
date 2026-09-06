@@ -1,6 +1,6 @@
 """Run the complete test suite with the current Python environment.
 
-Run from the repository root, or use
+Run ``poetry run python tests/run_suite.py`` from the repository root, or use
 this file's absolute path from any directory. The process exits with pytest's
 exit code, so failed tests also fail a CI job. No browser or app server starts.
 """

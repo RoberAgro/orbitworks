@@ -62,7 +62,7 @@ poetry run python -c "import orbitworks"
 
 Launch the local app and open it in your default browser:
 
-```powershell
+```bash
 poetry run python scripts/launch_app.py
 ```
 
@@ -91,7 +91,7 @@ case at \(v/v_c=1\), and the escape boundary at \(v/v_c=\sqrt{2}\).
 
 ## Interactive app
 
-Run the complete test suite with `poetry run python scripts/run_tests.py`.
+Run the complete test suite with `poetry run python tests/run_suite.py`.
 App releases use `app-vMAJOR.MINOR.PATCH` tags and deploy only after the GitHub
 test matrix passes. See the [test and release guide](docs/source/notes/app_releases.md)
 for version bumping and the required one-time Render/GitHub setup.
