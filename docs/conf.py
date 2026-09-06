@@ -7,11 +7,13 @@ sys.path.insert(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")),
 )
 
+from orbitworks import __version__
+
 # Define project metadata
 project = "OrbitWorks"
 copyright = "2026, Roberto Agromayor"
 author = "Roberto Agromayor"
-release = "0.1.0"
+release = __version__
 
 # Project-specific settings used by build_docs.py.
 # Relative paths are resolved from the directory containing this file.

@@ -1,8 +1,9 @@
 services:
   - type: web
     name: orbitworks
-    env: python
+    runtime: python
     plan: free
-    autoDeploy: true
-    buildCommand: "pip install poetry && poetry config virtualenvs.create false && poetry install --without dev"
+    # GitHub Actions triggers tagged, tested commits through the deploy hook.
+    autoDeployTrigger: 'off'
+    buildCommand: "pip install poetry==2.1.2 && poetry config virtualenvs.create false && poetry install --without dev --no-interaction"
     startCommand: "gunicorn orbitworks.app:server --bind 0.0.0.0:$PORT"

@@ -1,0 +1,118 @@
+name: Test and release OrbitWorks app
+
+on:
+  push:
+    branches: [main]
+    tags: ['app-v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out tested revision
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        run: python -m pip install "poetry==2.1.2"
+
+      - name: Install locked dependencies
+        run: poetry install --no-interaction
+
+      - name: Run all tests
+        run: poetry run python scripts/run_tests.py
+
+  deploy:
+    name: Request Render deployment
+    needs: test
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/app-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: render-production
+      cancel-in-progress: false
+    steps:
+      - name: Check out the tested release
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Validate release tag and main ancestry
+        id: release
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import re
+          import tomllib
+          from pathlib import Path
+
+          version = tomllib.loads(Path("pyproject.toml").read_text())["tool"]["poetry"]["version"]
+          if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+              raise SystemExit("Release version must have major.minor.patch form.")
+          if os.environ["RELEASE_TAG"] != f"app-v{version}":
+              raise SystemExit("Release tag does not match the tested package version.")
+          PY
+          # Full checkout history includes origin/main. Tags outside main cannot deploy.
+          git merge-base --is-ancestor HEAD origin/main
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger the exact tested commit on Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          RELEASE_COMMIT: ${{ steps.release.outputs.commit }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+          from urllib.request import Request, urlopen
+
+          hook = os.environ.get("RENDER_DEPLOY_HOOK_URL", "")
+          if not hook:
+              raise SystemExit("Configure the RENDER_DEPLOY_HOOK_URL repository secret first.")
+          commit = os.environ["RELEASE_COMMIT"]
+          if not re.fullmatch(r"[0-9a-f]{40}", commit):
+              raise SystemExit("Invalid release commit SHA.")
+          parts = urlsplit(hook)
+          if parts.scheme != "https" or parts.hostname != "api.render.com":
+              raise SystemExit("Expected an HTTPS Render deploy-hook URL.")
+          query = dict(parse_qsl(parts.query, keep_blank_values=True))
+          query["ref"] = commit
+          url = urlunsplit(parts._replace(query=urlencode(query)))
+          try:
+              with urlopen(Request(url, method="POST"), timeout=60) as response:
+                  if not 200 <= response.status < 300:
+                      raise RuntimeError("Deployment request was not accepted.")
+          except Exception:
+              # Do not print the exception: it can contain the secret hook URL.
+              raise SystemExit("Render deployment request failed. Check Render's dashboard; do not blindly retry.") from None
+          print(f"Render accepted deployment request for {commit}. Check Render for build/deploy completion.")
+          PY

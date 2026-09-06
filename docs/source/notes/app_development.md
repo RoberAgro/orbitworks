@@ -60,6 +60,11 @@ present, but this document does not assert that a hosted instance is available.
 
 ## 1. Physical model and initial conditions
 
+For the shared test runner, synchronized package/docs version and tag-gated
+Render deployment workflow, see [Testing and releasing the app](app_releases.md).
+The release configuration replaces the original commit-triggered deployment;
+the Render dashboard setup in that guide must also be applied.
+
 - Earth is stationary and spherical. The motion is two-dimensional, with the
   centre of Earth at the origin.
 - Each projectile is an independent point particle. There is no atmosphere,

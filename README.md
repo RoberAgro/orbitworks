@@ -5,9 +5,8 @@ mechanics. It is designed to keep the governing equations visible and to make
 analytical solutions, numerical trajectories, conservation laws, and orbital
 geometry easy to compare.
 
-> **Project status:** the repository structure is currently being established.
-> The modules and experiments described below are placeholders and do not yet
-> provide a working simulation API.
+> **Project status:** the interactive Dash app is implemented. The broader
+> reusable simulation API and some experiments below remain planned work.
 
 ## Purpose
 
@@ -61,16 +60,22 @@ poetry run python -c "import orbitworks"
 
 ## Quick start
 
-There is not yet an executable public API. Development will begin with the
-small algebraic functions in `src/orbitworks/analytical.py`, followed by the
-tests and focused scripts listed in the implementation roadmap.
+Launch the local app and open it in your default browser:
 
-The two documents that currently define the project are:
+```powershell
+poetry run python scripts/launch_app.py
+```
 
-- [`newtonian_gravity_orbits_kepler.md`](newtonian_gravity_orbits_kepler.md),
-  the detailed mathematical derivation; and
-- [`orbitworks_repository_spec.md`](orbitworks_repository_spec.md),
-  the architecture and implementation roadmap.
+The script calls `orbitworks.launch_app(debug=False, open_browser=True)`.
+Adjust `DEBUG` and `OPEN_BROWSER` at the top of the script as needed. The app
+runs at **http://127.0.0.1:8054**; stop it with Ctrl+C. To start without opening
+a browser, use `poetry run python -m orbitworks.app`.
+
+For the current implementation and longer-term plans, see:
+
+- [App development reference](docs/source/notes/app_development.md).
+- [Repository roadmap](docs/source/notes/orbitworks_planned_work.md).
+- [Orbital-mechanics theory](docs/source/theory/index.md).
 
 
 ## Example experiments
@@ -86,11 +91,22 @@ case at \(v/v_c=1\), and the escape boundary at \(v/v_c=\sqrt{2}\).
 
 ## Interactive app
 
-The planned Streamlit app will expose initial conditions and solver settings,
-then display the resulting orbit, classification, orbital elements,
-analytical overlay, and conservation diagnostics. The app will remain a thin
-interactive layer over the reusable package.
+Run the complete test suite with `poetry run python scripts/run_tests.py`.
+App releases use `app-vMAJOR.MINOR.PATCH` tags and deploy only after the GitHub
+test matrix passes. See the [test and release guide](docs/source/notes/app_releases.md)
+for version bumping and the required one-time Render/GitHub setup.
 
+The Dash app in `src/orbitworks/app.py` lets you place and aim a launcher, preview
+its path, and fire multiple independent projectiles around Earth. SciPy computes
+their trajectories; the browser animates their travelled paths and displays flight
+details and energy drift. The interface and styling live in
+`src/orbitworks/assets/orbit_scene.js` and `orbitworks.css`.
+
+
+Or if you installed from source with Poetry:
+```bash
+poetry run python -c "import orbitworks; orbitworks.launch_app()"
+```
 
 ## License
 
