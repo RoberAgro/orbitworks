@@ -175,7 +175,6 @@
             };
             number.addEventListener("blur",finishEditing);
             number.addEventListener("keydown",(event)=>{if(event.key==="Enter"){finishEditing();number.blur();}});
-            range.addEventListener("keydown",(event)=>event.stopPropagation());
         }
 
         buildControls() {
@@ -283,7 +282,9 @@
             document.addEventListener("visibilitychange", () => { this.lastFrame = performance.now(); this.renderStatus(); });
             document.addEventListener("keydown", (event) => {
                 if (el("controls-dialog").open || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
-                if (event.target.closest("input, textarea, select, [contenteditable=true]")) return;
+                // Sliders keep focus after dragging: allow shortcuts there,
+                // while leaving typing in number/text fields undisturbed.
+                if (event.target.closest("input:not([type=range]), textarea, select, [contenteditable=true]")) return;
                 if (event.key.toLowerCase() === "f") { event.preventDefault(); this.fire(); }
                 else if (event.code === "Space") { event.preventDefault(); this.pause(); }
                 else if (event.key === "Home") { event.preventDefault(); el("centre").click(); }
