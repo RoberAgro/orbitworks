@@ -1,6 +1,6 @@
 """Public package interface for the OrbitWorks orbital-mechanics laboratory."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 def launch_app(debug=False, open_browser=True):
