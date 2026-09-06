@@ -5,7 +5,7 @@
 From the repository root, after `poetry install`:
 
 ```powershell
-poetry run python scripts/run_tests.py
+poetry run python tests/run_suite.py
 ```
 
 The script discovers the complete `tests/` directory and preserves pytest's
