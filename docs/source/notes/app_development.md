@@ -19,23 +19,42 @@ READMEs and review checklists.
 | Location, relative to the repository root | Responsibility |
 | --- | --- |
 | `src/orbitworks/app.py` | Physical model, initial conditions, SciPy integration, Dash layout, launch callback and health endpoint |
-| `src/orbitworks/assets/cannon.js` | Launch-state synchronization, geometric preview, animation, camera, interactions and flight cards |
-| `src/orbitworks/assets/cannon.css` | Layout, typography, controls, Help dialog and status styling |
+| `src/orbitworks/assets/orbit_scene.js` | Launch-state synchronization, geometric preview, animation, camera, interactions and flight cards |
+| `src/orbitworks/assets/orbitworks.css` | Layout, typography, controls, Help dialog and status styling |
 | `src/orbitworks/constants.py` | Shared physical constants, including Earth's radius and gravitational parameter |
 | `render.yaml` | Render deployment configuration using Gunicorn and `orbitworks.app:server` |
-| `app/` | Historical, independently runnable application versions and their assets |
-| `app/app_old/` | Archived READMEs and development/review checklists, preserved as historical records |
-| `tests/test_cannon*.py` | Regression tests for the historical application versions; these do not automatically test every later change in the packaged app |
+| `src/orbitworks/__init__.py` | Lazy-imported `launch_app()` helper for local development |
+| `scripts/launch_app.py` | Simple local entry point with browser and debug settings at the top |
+| `tests/test_orbitworks_app.py` | Physical regression checks against the current packaged app |
+| `tests/test_orbitworks_interactions.py` | Layout, callback, asset, health, shortcut-source and launcher checks |
 
 Run the current app from the repository root:
 
 ```powershell
 poetry install
-poetry run python -m orbitworks.app
+poetry run python scripts/launch_app.py
 ```
 
-Open `http://127.0.0.1:8054`. Stop the local server with Ctrl+C. The local entry
-point binds to `127.0.0.1` with debugging disabled; the deployment configuration
+The script opens `http://127.0.0.1:8054` in the default browser. Stop the local
+server with Ctrl+C. Its `DEBUG` and `OPEN_BROWSER` settings are at the top of
+the script. The equivalent Python interface is:
+
+```python
+from orbitworks import launch_app
+
+launch_app(debug=False, open_browser=True)
+```
+
+Imports are deferred until the helper is called, so importing `orbitworks`
+does not start the server or load Dash. Browser opening uses a one-second
+daemon timer, cancelled if the server exits or fails to start. In debug mode,
+only the reloader's serving process opens a tab, not its supervisor. A reload
+starts a new serving process and can open another tab; use `open_browser=False`
+to avoid that. The timer is a convenience delay, not a server-readiness check.
+
+`poetry run python -m orbitworks.app` remains available without automatically
+opening a browser. The local entry point binds to `127.0.0.1` with debugging
+disabled by default; the deployment configuration
 uses Gunicorn instead of the development server. A deployment configuration is
 present, but this document does not assert that a hosted instance is available.
 
@@ -69,7 +88,29 @@ $$
 
 where $q$ is the entered speed ratio and $\alpha$ is the launch angle.
 
-## 2. Numerical integration and stopping conditions
+## 2. What runs where: Python vs JavaScript
+
+Two independent code paths compute orbital geometry from the same physics;
+neither is a stand-in for the other. This section is the map; §3 and §5 give
+the full detail behind the Python and JavaScript rows below.
+
+| Computation | Where | Notes |
+| --- | --- | --- |
+| Time integration of the equations of motion | Python, `solve_ivp` (§3) | The only place a trajectory is advanced through time; SciPy's adaptive DOP853 solver. |
+| Stopping-condition detection (impact, distance boundary, periapsis turn) and grazing-impact root refinement | Python, `impact_event`, `outer_event`, `periapsis_event`, `brentq` (§3) | Runs alongside and after the integration above. |
+| Orbital elements from the initial state — energy, angular momentum, eccentricity vector, orbit type, periapsis/apoapsis, period | Computed **independently in both** Python (`compute_positioned_flight`) and JavaScript (`preview`) | The same closed-form formulas are evaluated twice: once server-side for the launched flight's metadata, once client-side for the live preview. Neither call reuses the other's result. |
+| Numerical energy-drift diagnostic | Python | Recomputed at every returned sample; see §4. |
+| Live geometric preview path, before firing | JavaScript, `preview()` | Samples the conic $r=p/(1+e\cos\theta)$ directly and locates the surface/boundary crossing analytically (via `acos`); it does not integrate anything. See §5. |
+| Smooth on-screen motion between returned samples | JavaScript, `sample()` | Cubic Hermite interpolation of the positions/velocities Python already computed; no new physics. See §7. |
+| Camera, drawing, controls, clock, connection heartbeat | JavaScript | UI state and rendering only; consumes numbers computed elsewhere. |
+
+The dividing line is time integration: Python is the only code that ever
+advances the ODE. JavaScript recomputes the same orbital-element algebra from
+scratch for its live preview — so dragging the launcher updates instantly,
+without a server round trip — and otherwise only interpolates and renders the
+samples the server already produced.
+
+## 3. Numerical integration and stopping conditions
 
 The server integrates the Cartesian initial-value problem
 
@@ -106,7 +147,7 @@ $$
 The default launch is 500 km above Earth's surface on its right-hand side,
 with speed ratio 1, angle 90 degrees, and playback multiplier 2,000.
 
-## 3. Orbital geometry and numerical diagnostics
+## 4. Orbital geometry and numerical diagnostics
 
 The initial state determines specific energy, specific angular momentum and
 the eccentricity vector. These provide orbit type, eccentricity, periapsis,
@@ -130,7 +171,7 @@ by zero. The flight card states which normalization was used. This measures the
 computed samples, not a rigorous error bound between them. The app does not
 currently display a separate angular-momentum drift diagnostic.
 
-## 4. Live geometric preview
+## 5. Live geometric preview
 
 - A thin dashed line previews the **current launch settings**, before firing.
   It is recomputed in JavaScript as the launcher, arrow or controls change.
@@ -146,7 +187,7 @@ currently display a separate angular-momentum drift diagnostic.
 - Launched projectiles display only their travelled numerical paths. Updating
   the launcher changes the next-shot preview, never a previous shot's orbit.
 
-## 5. Browser/server responsibilities and multiple flights
+## 6. Browser/server responsibilities and multiple flights
 
 - The browser owns the launch settings, camera, flight list, playback state
   and simulation clock. Sliders, number boxes, arrow and preview use one shared
@@ -168,7 +209,7 @@ currently display a separate angular-momentum drift diagnostic.
 - State belongs to the browser page. Refreshing clears the flights; persistent
   saving, shared sessions and flight-history storage are not implemented.
 
-## 6. Animation and time
+## 7. Animation and time
 
 - A `requestAnimationFrame` loop draws the scene on an HTML canvas.
 - Cubic Hermite interpolation uses both positions and velocities for smooth
@@ -190,7 +231,7 @@ currently display a separate angular-momentum drift diagnostic.
   Flight-card duration values retain compact units. Grid spacing appears at
   the top left of the scene.
 
-## 7. Launch controls and direct manipulation
+## 8. Launch controls and direct manipulation
 
 | Control | Implemented behaviour |
 | --- | --- |
@@ -217,7 +258,7 @@ currently display a separate angular-momentum drift diagnostic.
 - A separate knob and joystick were not added: direct scene editing and the
   synchronized sliders provide those functions without extra control state.
 
-## 8. Mouse, keyboard and camera controls
+## 9. Mouse, keyboard and camera controls
 
 | Action | Input |
 | --- | --- |
@@ -249,7 +290,7 @@ Selecting a flight highlights it without moving the camera. **Follow selected**
 tracks it; manual panning releases follow mode. Free-camera wheel zoom is centred
 on the pointer, while following keeps the selected projectile centred.
 
-## 9. Flights log and feedback
+## 10. Flights log and feedback
 
 - The right-hand log is independently scrollable and uses compact colour-coded
   cards. Each flight's colour matches its path and marker.
@@ -267,7 +308,7 @@ on the pointer, while following keeps the selected projectile centred.
 - The repetitive successful-shot message was removed to keep the Launch area
   quiet. Validation, calculation and connectivity messages remain.
 
-## 10. Presentation, Help and connection status
+## 11. Presentation, Help and connection status
 
 - The title is **OrbitWorks**, with small caps, larger O and W, weight 700 and
   no added letter spacing. The subtitle ends with an exclamation mark.
@@ -296,7 +337,7 @@ on the pointer, while following keeps the selected projectile centred.
   Detection is periodic rather than instantaneous and may be delayed in
   background tabs.
 
-## 11. Development history and scope
+## 12. Development history and scope
 
 The first version used an altitude-only launcher and a local-tangent angle.
 Later versions introduced arbitrary x/y placement, direct scene manipulation,
@@ -309,24 +350,28 @@ position sliders are no longer +/-10,000 or +/-5; out-of-range thumbs no longer
 turn amber; Help uses H rather than ?; and Shift-wheel angle adjustment was
 restored after being removed in an intermediate version. Later typography,
 elapsed-time, numbering and keyboard-focus changes live in the packaged app,
-not necessarily in the historical version files.
+and are maintained there. The obsolete root `app/` directory was subsequently
+removed; the tests no longer load versioned app copies from it.
 
 The old planning notes also proposed JAX-accelerated geometry, Diffrax
 integration, standalone performance benchmarks, separate knob/joystick controls,
 and password-protected access. These are **not implemented features** of the
 current app. Numerical integration remains in the Python app module, and the
-live conic preview remains in JavaScript. The archived material preserves those
-ideas without presenting them as completed work.
+live conic preview remains in JavaScript, as detailed in §2. The archived
+material preserves those ideas without presenting them as completed work.
 
-Historical regression coverage includes orbital closure, circular and open
+Current regression coverage includes orbital closure, circular and open
 orbits, impact and grazing-contact handling, distant launches, invalid inputs,
-angle conventions, layout, assets and health responses. Targeted interaction
+angle conventions, layout, assets, health responses and local-launcher behaviour.
+The two app test modules import `orbitworks.app` directly and consolidate the
+previous version-specific tests. Targeted interaction
 checks during development also exercised dragging, double-click launch, input
 precision, slider shortcuts, Help, and disconnection/reconnection. Those manual
 or one-off checks are not a permanent browser test suite.
 
 The source documents for this consolidation are `README.md`, `README_v2.md`,
-`todo.md`, `TODO_v3.md`, `TODO_v4.md`, and `TODO_v5.md`, now archived unchanged
-under `app/app_old/`. The separate repository roadmap,
+`todo.md`, `TODO_v3.md`, `TODO_v4.md`, and `TODO_v5.md`. Those historical files
+were consolidated before the obsolete application directory was removed.
+The separate repository roadmap,
 [OrbitWorks planned work](orbitworks_planned_work.md), remains independent of
 this implemented-feature record.

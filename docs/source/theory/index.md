@@ -17,6 +17,8 @@ as a focused reference.
 03_energy_and_escape
 04_angular_momentum
 05_conic_orbits
+05a_orbit_parameters
 06_energy_and_orbit_geometry
+06a_time_dependent_motion
 07_keplers_laws
 ```
