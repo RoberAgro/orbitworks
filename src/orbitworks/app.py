@@ -1,8 +1,8 @@
 """ORBITWORKS: practical sliders, compact controls, and live connection status.
 
 Run ``poetry run python -m orbitworks.app`` and open http://127.0.0.1:8054.
-The versioned apps under ``app/`` and their assets are independent and remain
-unchanged; this module is the deployed copy, kept in sync with the latest one.
+This module and its adjacent assets are the current application. For a local
+launcher that also opens the browser, use ``orbitworks.launch_app()``.
 """
 
 from math import hypot, pi, sqrt
@@ -553,7 +553,7 @@ def fire_projectile(request):
 
 
 app.clientside_callback(
-    ClientsideFunction(namespace="cannonV5", function_name="update"),
+    ClientsideFunction(namespace="orbitworks", function_name="update"),
     Output("client-ready", "children"),
     Input("scene-config", "data"),
     Input("flight-result", "data"),

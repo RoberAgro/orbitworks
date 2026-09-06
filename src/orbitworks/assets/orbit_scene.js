@@ -114,7 +114,7 @@
         };
     }
 
-    class CannonScene {
+    class OrbitScene {
         constructor(canvas, config) {
             this.canvas = canvas; this.ctx = canvas.getContext("2d"); this.config = config;
             this.fontFamily = getComputedStyle(canvas).fontFamily;
@@ -626,13 +626,13 @@
     }
 
     // Public pure geometry helpers also make the preview independently testable.
-    window.cannonV5 = {preview, sample, scene: null};
+    window.orbitworks = {preview, sample, scene: null};
     function update(config, result) {
         const canvas=el("orbit-canvas");
         if(!canvas) return new Promise((resolve)=>setTimeout(()=>resolve(update(config,result)),25));
-        if(!window.cannonV5.scene) window.cannonV5.scene=new CannonScene(canvas,config);
-        window.cannonV5.scene.receive(result);
+        if(!window.orbitworks.scene) window.orbitworks.scene=new OrbitScene(canvas,config);
+        window.orbitworks.scene.receive(result);
         return "ready";
     }
-    window.dash_clientside=Object.assign({},window.dash_clientside,{cannonV5:{update}});
+    window.dash_clientside=Object.assign({},window.dash_clientside,{orbitworks:{update}});
 })();

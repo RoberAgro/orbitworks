@@ -77,7 +77,7 @@ dl { display: grid; grid-template-columns: 105px 1fr; gap: 12px 16px; } dt { fon
 @media(max-width:560px) { .app-shell { display: block; } .sidebar { height: auto; } .main-panel { height: 80vh; } }
 
 
-/* Compact editing controls; slider position is independent of the true value. */
+/* OrbitWorks editing controls; slider position is independent of the true value. */
 .control-row { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 9px; align-items: start; }
 .slider-track { min-width: 0; padding-top: 8px; }
 .slider-ticks { position: relative; height: 13px; margin-top: 7px; font-size: 9px; color: var(--text-muted); }
