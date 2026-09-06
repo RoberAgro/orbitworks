@@ -255,7 +255,7 @@ app.layout = html.Div(
             [
                 html.H1("OrbitWorks", className="wordmark"),
                 html.P(
-                    "Place it, aim it, and let gravity take over", className="subtitle"
+                    "Place it, aim it, and let gravity take over!", className="subtitle"
                 ),
                 html.Div(
                     [

@@ -13,6 +13,12 @@
         seconds < 3600 ? `${(seconds / 60).toFixed(1)} min` :
         seconds < 86400 ? `${(seconds / 3600).toFixed(2)} h` : seconds < 31557600 ? `${(seconds / 86400).toFixed(2)} d` : `${(seconds / 31557600).toFixed(2)} yr`;
 
+    function elapsedTimeLabel(seconds) {
+        const [value, abbreviation] = durationLabel(seconds).split(" ");
+        const units = {s: "second", min: "minute", h: "hour", d: "day", yr: "year"};
+        return `${value} ${units[abbreviation]}${Number(value) === 1 ? "" : "s"}`;
+    }
+
     function preview(launch, outerRadius) {
         /* In R, sqrt(R^3/GM) units, GM=1. Infer ell, energy and eccentricity
          * vector from the launch state, then sample r=p/(1+e*cos(nu)) in the
@@ -543,7 +549,7 @@
             }
             this.draw();
             if (now-this.lastStatus>120) {
-                el("simulation-clock").textContent = `Time elapsed: ${durationLabel(this.clock)}`;
+                el("simulation-clock").textContent = `Time elapsed: ${elapsedTimeLabel(this.clock)}`;
                 this.renderStatus();
                 for (const flight of this.flights) {
                     const age = this.clock-flight.start;
