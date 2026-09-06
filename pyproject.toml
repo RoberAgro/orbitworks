@@ -17,6 +17,8 @@ equinox = "^0.13.8"
 matplotlib = "^3.11.1"
 plotly = "^7.0.0"
 scipy = "^1.17.1"
+dash = ">=3.1,<5"
+gunicorn = "^26.2.0"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^9.5.0"

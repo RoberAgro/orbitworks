@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: orbitworks
+    env: python
+    plan: free
+    autoDeploy: true
+    buildCommand: "pip install poetry && poetry config virtualenvs.create false && poetry install --without dev"
+    startCommand: "gunicorn orbitworks.app:server --bind 0.0.0.0:$PORT"
