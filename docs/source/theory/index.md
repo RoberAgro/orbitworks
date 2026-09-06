@@ -2,8 +2,9 @@
 
 This guide develops classical orbital mechanics from Newton's inverse-square
 law. It begins with the physical picture of an orbit as continuous free fall,
-then introduces circular motion, energy, angular momentum, conic sections, and
-Kepler's laws.
+then introduces circular motion, energy, angular momentum, conic sections,
+orbital elements, and finally how position varies with time. Kepler's three
+laws emerge along the way, named at the point each one is derived.
 
 The chapters are intended to be read in order, although each can also be used
 as a focused reference.
@@ -20,6 +21,5 @@ as a focused reference.
 06_orbital_elements_from_state
 07_energy_and_vis_viva
 08_conic_geometry_atlas
-09_keplers_laws
-10_time_dependent_motion
+09_time_dependent_motion
 ```

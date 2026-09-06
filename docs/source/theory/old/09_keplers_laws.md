@@ -1,7 +1,7 @@
 # Kepler's laws and synthesis
 
-Kepler's three empirical laws — the shape of planetary orbits, the constancy
-of areal velocity, and the relation between period and size — are
+Kepler's three empirical laws (the shape of planetary orbits, the constancy
+of areal velocity, and the relation between period and size) are
 consequences of Newton's law together with the results derived so far. This
 chapter states the first two explicitly, derives the third, and closes the
 guide with its complete logical chain and a formula reference.
@@ -262,4 +262,5 @@ $$
 
 With the orbit's shape, its governing conserved quantities, and its complete
 geometric parameterization now established, the final step is to locate the
-body along the orbit as a function of time — the subject of the next chapter.
+body along the orbit as a function of time. That is the subject of the next
+chapter.

@@ -34,7 +34,7 @@ t-\tau=\frac{p^2}{\ell}\int_0^{\theta}\frac{d\vartheta}{(1+e\cos\vartheta)^2},
 $$
 
 where $\tau$ is the time of periapsis passage ($\theta=0$). The integral is
-elementary but its closed form depends on whether $e<1$, $e=1$, or $e>1$ —
+elementary but its closed form depends on whether $e<1$, $e=1$, or $e>1$,
 which motivates introducing a different substitution, or **anomaly**, for
 each case.
 
@@ -84,8 +84,8 @@ the focus, not the center) on the circle.
 
 On the circle, the sector from the center out to angle $E$ has area
 $\tfrac12a^2E$. Subtracting the triangle formed by the center, the focus (a
-distance $ae$ from the center), and the point on the circle — area
-$\tfrac12(ae)(a\sin E)$ — gives the area swept from the *focus*:
+distance $ae$ from the center), and the point on the circle, whose area is
+$\tfrac12(ae)(a\sin E)$, gives the area swept from the *focus*:
 
 $$
 A_{\text{circle}}=\frac12a^2E-\frac12a^2e\sin E=\frac12a^2(E-e\sin E).
@@ -128,7 +128,23 @@ M=E-e\sin E.
 }
 $$
 
-This is the **elliptic Kepler equation**. It is exact, but it is
+This is the **elliptic Kepler equation**. Setting $E=2\pi$, a full
+revolution back to periapsis, gives $\sin E=0$ again, so the time elapsed is
+the orbital period:
+
+$$
+T=\sqrt{\frac{a^3}{GM}}\,(2\pi)
+\quad\Longrightarrow\quad
+\boxed{
+T^2=\frac{4\pi^2}{GM}a^3.
+}
+$$
+
+The eccentricity cancels completely: the period depends only on the
+semi-major axis. This is Kepler's third law, falling directly out of the
+same relation that produces the mean anomaly.
+
+The elliptic Kepler equation is exact, but it is
 transcendental in $E$: there is no elementary closed-form inverse $E(M)$.
 Given a time $t$ (hence $M$), one solves
 
@@ -269,8 +285,8 @@ $$
 $$
 
 Rotating $\mathbf r$ and $\mathbf v$ from the orbital plane into the reference
-frame — by the argument of periapsis $\omega$, inclination $i$, and longitude
-of ascending node $\Omega$ from {doc}`08_conic_geometry_atlas` — gives the full
+frame, by the argument of periapsis $\omega$, inclination $i$, and longitude
+of ascending node $\Omega$ from {doc}`08_conic_geometry_atlas`, gives the full
 three-dimensional Cartesian state. Going the other way, from an initial
 Cartesian state $(\mathbf r_0,\mathbf v_0)$, the angular momentum
 $\boldsymbol\ell$, eccentricity vector $\mathbf e$ (chapter 6), and energy
@@ -288,7 +304,7 @@ advancing a time-of-flight relation and solving a single scalar transcendental
 ## The numerical route: integrating the Cartesian equations of motion
 
 The anomaly-based method above is exact but specific to the unperturbed
-two-body problem — every step relies on the conic solution. As soon as
+two-body problem, since every step relies on the conic solution. As soon as
 additional forces are present (atmospheric drag, third-body perturbations,
 solar radiation pressure, non-spherical gravity, or simply multiple attracting
 bodies), no closed-form orbit exists and there is no anomaly to solve for.
@@ -376,7 +392,7 @@ is available for direct comparison.
 - **The eccentricity vector** (chapter 6), $\mathbf e=(\mathbf
   v\times\boldsymbol\ell)/GM-\mathbf e_r$, should keep both constant
   magnitude and constant direction. A slowly rotating eccentricity vector is
-  the signature of spurious numerical apsidal precession — an error a plain
+  the signature of spurious numerical apsidal precession, an error a plain
   energy check can miss.
 - **Direct comparison against the analytic solution.** Since $\mathbf r(t)$
   from the Kepler-equation route above is available in closed form (up to a
@@ -391,7 +407,7 @@ is available for direct comparison.
 In the pure Kepler problem, numerical integration is a validation and
 teaching exercise rather than a necessity, since the analytic route above
 already solves it exactly. Its real purpose is as the foundation for
-perturbed and many-body problems, where no analytic shape or anomaly exists —
-and the two-body analytic solution developed in this chapter remains the
+perturbed and many-body problems, where no analytic shape or anomaly exists.
+The two-body analytic solution developed in this chapter remains the
 standard benchmark against which any such numerical propagator is first
 checked.

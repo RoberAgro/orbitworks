@@ -157,7 +157,7 @@ $$
 
 This is the **vis-viva equation**: it gives the speed at any radius on a
 Keplerian orbit of semi-major axis $a$, without needing to know $\theta$ or
-$e$ separately. It applies everywhere along the orbit — at periapsis,
+$e$ separately. It applies everywhere along the orbit, at periapsis,
 apoapsis, or in between.
 
 **Why speed changes along an elliptical orbit.** Since $\varepsilon$ is
@@ -186,9 +186,9 @@ e^2=1+\frac{2\varepsilon\ell^2}{(GM)^2}.
 $$
 
 This must agree with $e=|\mathbf e|$ from the eccentricity vector for the
-same initial state — two derivations, one starting from a conserved vector
-and one from conserved scalars, meeting at the same value. The
-classification by energy sign follows immediately:
+same initial state: two derivations, one starting from a conserved vector
+and one from conserved scalars, meet at the same value. The classification
+by energy sign follows immediately:
 
 $$
 \boxed{
@@ -229,12 +229,12 @@ $$
 
 Checking the limits: $v=v_c$ gives $e=0$ (circular); $v=v_{\mathrm{esc}}
 =\sqrt2\,v_c$ gives $e=1$ (parabolic, since $v^2/v_c^2=2$); speeds in between
-give $0<e<1$ (elliptical); speeds above escape give $e>1$ (hyperbolic) —
+give $0<e<1$ (elliptical); speeds above escape give $e>1$ (hyperbolic),
 consistent with the energy-sign classification above.
 
 This tangential case is special: knowing the radius and speed at a single
 point fixes $e$ only because the launch direction (purely tangential) was
 also specified. In general, a position and a *speed* alone are not enough to
-fix an orbit — the full velocity *vector* is needed, which is exactly the
+fix an orbit: the full velocity *vector* is needed, which is exactly the
 extra information a launch angle (or, equivalently, the split between $\dot
 r$ and $r\dot\theta$) supplies.

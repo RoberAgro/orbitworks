@@ -1,12 +1,11 @@
 # Finding the orbit from a position and a velocity vector
 
-An orbit's shape and size come from two constants of integration — $p$ and
-$e$ — together with an orientation angle fixed by where periapsis lies. In an
+An orbit's shape and size come from two constants of integration, $p$ and
+$e$, together with an orientation angle fixed by where periapsis lies. In an
 initial value problem, though, these are not what is actually given: what is
 specified is a position and a velocity at one instant, $\mathbf r_0$ and
 $\mathbf v_0$. This chapter starts from exactly that information and builds
-the integration constants — and with them, the whole orbit — directly from
-it.
+the integration constants, and with them the whole orbit, directly from it.
 
 Throughout, $\mathbf r$ and $\mathbf v$ denote the instantaneous position and
 velocity vectors, $r=|\mathbf r|$, and $\mathbf e_r=\mathbf r/r$ the radial
@@ -33,7 +32,7 @@ p=\frac{\ell^2}{GM}
 $$
 
 follows immediately. One of the two constants in $r(\theta)=p/(1+e\cos\theta)$
-is therefore already in hand. Finding $e$ — and the orbit's orientation —
+is therefore already in hand. Finding $e$, and the orbit's orientation,
 takes more work, because $e$ does not appear as a vector built from $\mathbf
 r$ and $\mathbf v$ directly. The rest of this chapter constructs one.
 
@@ -190,7 +189,7 @@ $$
 
 Then $e=|\mathbf e|$ classifies the conic (circle, ellipse, parabola,
 hyperbola), and $\mathbf e/e$ is the unit vector toward periapsis, from which
-$\theta$ — the angle of $\mathbf r_0$ measured from periapsis — can be read
+$\theta$, the angle of $\mathbf r_0$ measured from periapsis, can be read
 off directly. The orbital plane itself is the plane perpendicular to
 $\boldsymbol\ell$.
 
@@ -202,7 +201,7 @@ $$
 
 is also computable immediately from $(\mathbf r_0,\mathbf v_0)$ (chapter 3).
 It is not independent of $\boldsymbol\ell$ and $\mathbf e$: the next chapter
-derives the relation between $\varepsilon$, $\ell$, and $e$ explicitly — a
-second, independent route to the same eccentricity computed here — together
-with what $\varepsilon$ says about the orbit's size and how speed trades off
-against distance.
+derives the relation between $\varepsilon$, $\ell$, and $e$ explicitly. That
+gives a second, independent route to the same eccentricity computed here,
+together with what $\varepsilon$ says about the orbit's size and how speed
+trades off against distance.

@@ -23,18 +23,3 @@ same four cases used to build the classification table in
 speed, specific energy, eccentricity, and semi-latus rectum, then plots the
 four resulting shapes side by side.
 
-## How it uses the shared package
-
-Each initial state is classified with
-{py:func}`orbitworks.analytical.classify_orbit` — the same function that
-implements the eccentricity-vector derivation of {doc}`../theory/06_orbital_elements_from_state`
-and the energy relations of {doc}`../theory/07_energy_and_vis_viva` — rather
-than recomputing $e$, $p$, and the energy locally. The resulting
-{py:class}`orbitworks.analytical.OrbitElements` is then sampled into points
-with {py:func}`orbitworks.geometry.sample_conic`
-({doc}`../theory/08_conic_geometry_atlas`), which trims the open parabolic and
-hyperbolic branches to a finite plotting radius with
-{py:func}`orbitworks.geometry.angle_limit_for_radius`. Both functions also
-back {py:mod}`orbitworks.app`, so this script, the interactive app, and
-{doc}`integrate_orbit` all classify and sample conics through the same tested
-code.

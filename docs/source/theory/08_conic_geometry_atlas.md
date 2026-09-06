@@ -4,9 +4,9 @@ An ellipse and a hyperbola are, first of all, curves with their own classical
 geometric definitions, independent of any orbital mechanics: built from a
 center, two foci, and a focal distance $c$. This chapter builds that picture,
 ties it to the eccentricity and semi-latus rectum already in hand, and then
-collects every quantity attached to a Keplerian orbit — $p$, $e$, $a$, $b$,
-$c$, $r_p$, $r_a$, $\boldsymbol\ell$, $\varepsilon$ — into one map, so that
-any one known quantity converts directly to any other.
+collects every quantity attached to a Keplerian orbit, namely $p$, $e$, $a$,
+$b$, $c$, $r_p$, $r_a$, $\boldsymbol\ell$, and $\varepsilon$, into one map,
+so that any one known quantity converts directly to any other.
 
 ## The ellipse and hyperbola as curves
 
@@ -15,7 +15,6 @@ converting the polar solution $r=p/(1+e\cos\theta)$ (chapter 5). There is
 also a classical, purely geometric definition of these curves, independent of
 any orbital mechanics, that makes the term *eccentricity* intuitive.
 
-![Ellipse and hyperbola geometry, showing the center, foci, semi-axes, and periapsis/apoapsis distances](conic_geometry.svg)
 
 **The ellipse** is the locus of points whose *sum* of distances to two fixed
 foci, a distance $c$ apart from the center, is constant, equal to $2a$. Apply
@@ -34,8 +33,9 @@ consistent with $b=a\sqrt{1-e^2}$ and $c=ae$ (chapter 5):
 $c^2=a^2e^2=a^2(1-b^2/a^2)=a^2-b^2$.
 
 **The hyperbola** is the locus where the *difference* of distances to the two
-foci is constant, equal to $2a$. The analogous right triangle — center,
-focus, and the point where the asymptote passes over the vertex — gives
+foci is constant, equal to $2a$. The analogous right triangle, formed by the
+center, the focus, and the point where the asymptote passes over the vertex,
+gives
 
 $$
 \boxed{
@@ -60,7 +60,7 @@ $e>1$. The parabola, with no center and no second focus at finite distance,
 is the boundary case $e=1$, reachable only through the focus-directrix
 definition.
 
-Only one focus is physical — it is where the central mass sits. The
+Only one focus is physical: it is where the central mass sits. The
 periapsis and apoapsis, $r_p=a(1-e)$ and $r_a=a(1+e)$ (chapter 5), are simply
 the distances from that focus to the near and far vertices, $a-c$ and $a+c$:
 a hyperbola's near branch has $r_p=c-a=a(e-1)$ and no apoapsis, since the far
@@ -93,9 +93,10 @@ The two are related, but not equal, as derived above.
 
 ## The parameter web
 
-Every quantity in the glossary is fixed by any **two** independent numbers —
-the Binet-equation solution (chapter 5) has exactly two free constants beyond
-orientation ($\ell$ and $C$, repackaged as $p$ and $e$). The table below
+Every quantity in the glossary is fixed by any **two** independent numbers,
+since the Binet-equation solution (chapter 5) has exactly two free constants
+beyond orientation ($\ell$ and $C$, repackaged as $p$ and $e$). The table
+below
 collects the conversions already derived, and where each comes from.
 
 $$
@@ -113,8 +114,9 @@ $$
 $$
 
 The $(r_p,r_a)$ conversion follows by adding and subtracting chapter 5's two
-boxed relations. Every other quantity — $p$, $b$, $c$, $\varepsilon$ — follows
-from any row using the relations already derived in chapters 5–7. In
+boxed relations. Every other quantity, including $p$, $b$, $c$, and
+$\varepsilon$, follows from any row using the relations already derived in
+chapters 5–7. In
 particular, $(\boldsymbol\ell,\mathbf e)$ and $(\varepsilon,\ell)$ are the two
 pairs most directly tied to an initial Cartesian state $(\mathbf r_0,\mathbf
 v_0)$: one computes the first pair from it immediately (chapter 6), the
@@ -145,6 +147,6 @@ initial Cartesian state $(\mathbf r_0,\mathbf v_0)$. The two representations
 are two different bases for the same six-dimensional space of possible
 two-body states.
 
-With the orbit's geometry now fully characterized — from any starting
-description — the remaining question is how the body moves along it as a
+With the orbit's geometry now fully characterized, from any starting
+description, the remaining question is how the body moves along it as a
 function of time, taken up next.
