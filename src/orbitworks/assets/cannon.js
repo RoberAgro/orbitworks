@@ -24,9 +24,10 @@
         const radius = Math.hypot(x, y), phi = Math.atan2(y, x);
         const alpha = angle * Math.PI / 180;
         const speed = ratio / Math.sqrt(radius);
-        const vr = speed * Math.sin(alpha), vt = speed * Math.cos(alpha);
-        const vx = vr * Math.cos(phi) - vt * Math.sin(phi);
-        const vy = vr * Math.sin(phi) + vt * Math.cos(phi);
+        // The launch angle is counterclockwise from the fixed positive x-axis.
+        const vx = speed * Math.cos(alpha), vy = speed * Math.sin(alpha);
+        const vr = (x * vx + y * vy) / radius;
+        const vt = (x * vy - y * vx) / radius;
         const energy = speed * speed / 2 - 1 / radius;
         const ell = radius * vt;
         const dot = x * vx + y * vy;
@@ -110,9 +111,11 @@
     class CannonScene {
         constructor(canvas, config) {
             this.canvas = canvas; this.ctx = canvas.getContext("2d"); this.config = config;
+            this.fontFamily = getComputedStyle(canvas).fontFamily;
             this.launch = { ...config.defaults }; this.controls = {};
             this.camera = {x: 0, y: 0, radius: 3.0}; this.follow = null;
             this.clock = 0; this.paused = false; this.epoch = 0;
+            this.connection = "connecting";
             this.flights = []; this.seen = new Set(); this.selected = null; this.nextNumber = 1;
             this.expanded = null; this.doubleEligible = false;
             this.pending = null; this.lastFrame = performance.now(); this.lastStatus = 0;
@@ -120,65 +123,83 @@
             this.buildControls(); this.bindEvents(); this.resize(); this.refreshLaunch();
             this.observer = new ResizeObserver(() => this.resize());
             this.observer.observe(canvas.parentElement);
+            this.checkConnection();
             requestAnimationFrame((now) => this.tick(now));
         }
 
-        makeControl(key, title, minimum, maximum, step, logarithmic = false) {
-            const container = el(`${key}-control`);
-            const row = document.createElement("div"); row.className = "control-heading";
-            const label = document.createElement("label"); label.textContent = title; label.htmlFor = `${key}-number`;
-            const number = document.createElement("input");
-            number.type = "number"; number.id = `${key}-number`; number.min = minimum;
-            number.max = maximum; number.step = "any"; number.value = this.launch[key];
-            const range = document.createElement("input"); range.type = "range"; range.id = `${key}-slider`;
-            range.setAttribute("aria-label", title); range.min = logarithmic ? Math.log10(minimum) : minimum;
-            range.max = logarithmic ? Math.log10(maximum) : maximum; range.step = step;
-            row.append(label, number); container.append(row, range);
-            this.controls[key] = {number, range, logarithmic};
-            range.addEventListener("input", () => {
-                const value = logarithmic ? 10 ** Number(range.value) : Number(range.value);
-                this.setLaunch({[key]: value});
+        makeControl(key, title, minimum, maximum, step, hint, ticks, logarithmic=false) {
+            const container=el(key+"-control");
+            const heading=document.createElement("div");heading.className="control-heading";
+            const label=document.createElement("label");label.textContent=title;label.htmlFor=key+"-number";label.tabIndex=0;
+            const tooltip=document.createElement("span");tooltip.className="control-tooltip";tooltip.id=key+"-tooltip";tooltip.setAttribute("role","tooltip");tooltip.textContent=hint;
+            label.setAttribute("aria-describedby",tooltip.id);heading.append(label,tooltip);
+            const row=document.createElement("div");row.className="control-row";
+            const track=document.createElement("div");track.className="slider-track";
+            const number=document.createElement("input");number.type="number";number.id=key+"-number";
+            number.min=minimum;number.max=maximum;number.step="any";number.title=hint;number.className="control-value";
+            number.setAttribute("aria-describedby",tooltip.id);
+            const range=document.createElement("input");range.type="range";range.id=key+"-slider";
+            const localPosition=key==="x" || key==="y";
+            range.min=localPosition ? -this.config.positionSliderLimit : logarithmic ? Math.log10(minimum) : minimum;
+            range.max=localPosition ? this.config.positionSliderLimit : logarithmic ? Math.log10(maximum) : maximum;
+            range.step=step;range.setAttribute("aria-label",title);range.title=hint;
+            const marks=document.createElement("div");marks.className="slider-ticks";
+            for(const [value,text] of ticks) {
+                const mark=document.createElement("span");mark.textContent=text;
+                const displayValue=logarithmic ? Math.log10(value) : value;
+                mark.style.left=((displayValue-Number(range.min))/(Number(range.max)-Number(range.min))*100)+"%";
+                marks.append(mark);
+            }
+            track.append(range,marks);row.append(track,number);container.append(heading,row);
+            this.controls[key]={number,range,logarithmic,hint};
+            range.addEventListener("input",()=>{
+                const value=logarithmic ? 10**Number(range.value) : Number(range.value);
+                this.setLaunch({[key]:value});
             });
-            number.addEventListener("input", () => {
-                if (number.value === "" || !number.validity.valid) {
-                    number.setAttribute("aria-invalid", "true"); this.refreshLaunch(); return;
+            number.addEventListener("input",()=>{
+                if(number.value==="" || !number.validity.valid) {
+                    number.setAttribute("aria-invalid","true");this.refreshLaunch();return;
                 }
                 number.removeAttribute("aria-invalid");
-                this.setLaunch({[key]: Number(number.value)}, key);
+                this.setLaunch({[key]:Number(number.value)},key);
             });
-            // Never silently discard partially typed or out-of-range input.
-            number.addEventListener("blur", () => { this.refreshLaunch(); });
-            range.addEventListener("keydown", (event) => event.stopPropagation());
+            const finishEditing=()=>{
+                if(number.value!=="" && number.validity.valid && number.getAttribute("aria-invalid")!=="true") this.syncControl(key);
+                this.refreshLaunch();
+            };
+            number.addEventListener("blur",finishEditing);
+            number.addEventListener("keydown",(event)=>{if(event.key==="Enter"){finishEditing();number.blur();}});
+            range.addEventListener("keydown",(event)=>event.stopPropagation());
         }
 
         buildControls() {
-            this.makeControl("x", "x / R⊕", -this.config.positionLimit, this.config.positionLimit, 0.001);
-            this.makeControl("y", "y / R⊕", -this.config.positionLimit, this.config.positionLimit, 0.001);
-            for (const key of ["x","y"]) {
-                const marks=document.createElement("div"); marks.className="position-marks";
-                for (const text of ["−10,000","0","+10,000"]) { const mark=document.createElement("span");mark.textContent=text;marks.append(mark); }
-                el(key+"-control").append(marks);
-            }
-            this.makeControl("ratio", "Speed / vc", 0, this.config.maxRatio, 0.001);
-            const reference=document.createElement("span"); reference.id="speed-reference"; reference.className="inline-reference";
-            el("ratio-control").querySelector("label").append(reference);
-            const marks=document.createElement("div"); marks.className="speed-marks";
-            for (const [value,text] of [[0,"0"],[1,"1 · circular"],[Math.SQRT2,"√2 · escape"],[3,"3"]]) {
-                const mark=document.createElement("span");mark.textContent=text;mark.style.left=(value/3*100)+"%";marks.append(mark);
-            }
-            el("ratio-control").append(marks);
-            this.makeControl("angle", "Angle · °", -180, 180, 0.1);
-            this.controls.angle.number.title="Angle from the local horizontal; +90° outward, −90° inward";
-            this.makeControl("rate", "Time multiplier", 1, this.config.maxRate, 0.01, true);
-            this.controls.rate.number.title="Simulated seconds per real second";
-            for (const key of Object.keys(this.controls)) this.syncControl(key);
+            const limit=this.config.positionSliderLimit;
+            const positionTicks=[[-limit,"−"+limit],[0,"0"],[limit,String(limit)]];
+            this.makeControl("x","Horizontal position",-this.config.positionLimit,this.config.positionLimit,0.001,
+                "Horizontal distance from Earth's centre, measured in Earth radii. Negative is left; positive is right. This slider spans −10 to +10; the number box and scene accept ±10,000.",positionTicks);
+            this.makeControl("y","Vertical position",-this.config.positionLimit,this.config.positionLimit,0.001,
+                "Vertical distance from Earth's centre, measured in Earth radii. Negative is down; positive is up. The slider spans −10 to +10, independently of the wider number-box and scene range. Launch positions must be above the surface.",positionTicks);
+            this.makeControl("ratio","Launch speed",0,this.config.maxRatio,0.001,
+                "Speed divided by the local circular speed vc = √(GM/r). A tangential launch (sideways around Earth) at 1 is circular; √2 ≈ 1.4142 is escape speed. Direction can still lead to impact. Moving the launcher preserves this ratio and updates the actual km/s.",[[0,"0"],[1,"1"],[2,"2"],[3,"3"]]);
+            const reference=document.createElement("span");reference.id="speed-reference";reference.className="inline-reference";
+            el("ratio-control").querySelector(".control-heading").append(reference);
+            this.makeControl("angle","Launch angle",-180,180,0.1,
+                "Angle in degrees, measured counterclockwise from the right: 0° points right and 90° points up.",[[-180,"−180"],[0,"0"],[180,"180"]]);
+            this.makeControl("rate","Time multiplier",1,this.config.maxRate,0.01,
+                "Simulated seconds per real second, shared by every flight. 1 is real time; 2,000 makes a low Earth orbit take about 3 seconds. The slider is logarithmic. Very high rates can make short orbits appear to jump between frames.",[[1,"1"],[1e5,"10⁵"],[1e10,"10¹⁰"]],true);
+            for(const key of Object.keys(this.controls)) this.syncControl(key);
         }
 
         syncControl(key, keepTyped) {
-            const {number, range, logarithmic} = this.controls[key];
-            const value = this.launch[key];
-            if (!keepTyped) { number.value = Number(value.toFixed(7)); number.removeAttribute("aria-invalid"); }
-            range.value = logarithmic ? Math.log10(value) : value;
+            const {number,range,logarithmic,hint}=this.controls[key],value=this.launch[key];
+            // Four decimals are a presentation choice; never round the state
+            // used by preview, simulation or an in-progress drag.
+            if(!keepTyped) {number.value=value.toFixed(4);number.removeAttribute("aria-invalid");}
+            number.style.fontSize=number.value.length>12 ? "9px" : "";
+            const displayValue=logarithmic ? Math.log10(value) : value;
+            range.value=clamp(displayValue,Number(range.min),Number(range.max));
+            const outside=displayValue<Number(range.min) || displayValue>Number(range.max);
+            range.title=outside ? "Actual value "+value.toFixed(4)+" is outside this slider's range. It is retained for the simulation. Moving this slider chooses a new value within its displayed range." : hint;
         }
 
         setLaunch(changes, keepTyped) {
@@ -197,8 +218,8 @@
                 r<this.config.minRadius ? "Place the launcher above Earth’s surface." :
                 Math.abs(x)>this.config.positionLimit || Math.abs(y)>this.config.positionLimit ? "Coordinates must stay within ±10,000 R⊕." : "";
             el("launch-validity").textContent=message;
-            el("fire").disabled=!this.valid || this.pending!==null;
-            for (const key of ["x","y"]) this.controls[key].number.title=(this.launch[key]*this.config.radiusKm).toLocaleString(undefined,{maximumFractionDigits:1})+" km";
+            el("fire").disabled=!this.valid || this.pending!==null || this.connection!=="connected";
+            for (const key of ["x","y"]) this.controls[key].number.title=this.controls[key].hint+" Current value: "+(this.launch[key]*this.config.radiusKm).toLocaleString(undefined,{maximumFractionDigits:1})+" km.";
             const vc=r>0 ? Math.sqrt(this.config.gm/(r*this.config.radiusKm*1000))/1000 : NaN;
             el("speed-reference").textContent=Number.isFinite(vc) ? (ratio*vc).toFixed(3)+" km/s" : "—";
             el("speed-reference").title="Local circular speed: "+vc.toFixed(3)+" km/s. Position changes preserve v/vc.";
@@ -225,8 +246,12 @@
             this.canvas.addEventListener("contextmenu", (event) => event.preventDefault());
             this.canvas.addEventListener("wheel", (event) => {
                 event.preventDefault();
-                if (event.shiftKey) this.setLaunch({angle: wrapAngle(this.launch.angle + (event.deltaY > 0 ? -2 : 2))});
-                else { const p = this.pointer(event); this.zoom(Math.exp(clamp(event.deltaY, -200, 200)*0.002), p.x, p.y); }
+                if (event.shiftKey) {
+                    this.setLaunch({angle: wrapAngle(this.launch.angle - 2*Math.sign(event.deltaY))});
+                    return;
+                }
+                const p = this.pointer(event);
+                this.zoom(Math.exp(clamp(event.deltaY, -200, 200)*0.002), p.x, p.y);
             }, {passive: false});
             this.canvas.addEventListener("click", (event) => {
                 // PointerEvent.detail is zero in browsers; click events carry
@@ -249,14 +274,14 @@
             };
             this.canvas.addEventListener("pointerup", endDrag);
             this.canvas.addEventListener("pointercancel", endDrag);
-            document.addEventListener("visibilitychange", () => { this.lastFrame = performance.now(); });
+            document.addEventListener("visibilitychange", () => { this.lastFrame = performance.now(); this.renderStatus(); });
             document.addEventListener("keydown", (event) => {
                 if (el("controls-dialog").open || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
                 if (event.target.closest("input, textarea, select, [contenteditable=true]")) return;
                 if (event.key.toLowerCase() === "f") { event.preventDefault(); this.fire(); }
                 else if (event.code === "Space") { event.preventDefault(); this.pause(); }
                 else if (event.key === "Home") { event.preventDefault(); el("centre").click(); }
-                else if (event.key === "?") { event.preventDefault(); el("controls-dialog").showModal(); }
+                else if (event.key.toLowerCase() === "h") { event.preventDefault(); el("controls-dialog").showModal(); }
             });
         }
 
@@ -271,8 +296,7 @@
 
         handles() {
             const base = this.screen(this.launch.x, this.launch.y);
-            const phi = Math.atan2(this.launch.y, this.launch.x);
-            const heading = phi + Math.PI/2 - this.launch.angle*Math.PI/180;
+            const heading = this.launch.angle*Math.PI/180;
             const length=20+44*this.launch.ratio;
             return {base, tip: {x: base.x+length*Math.cos(heading), y: base.y-length*Math.sin(heading)}};
         }
@@ -314,8 +338,8 @@
                 const base = this.handles().base;
                 const dx=p.x-this.drag.offset.x-base.x, dy=p.y-this.drag.offset.y-base.y;
                 const distance=Math.hypot(dx,dy);
-                const heading=Math.atan2(-dy,dx), phi=Math.atan2(this.launch.y,this.launch.x);
-                const angle=distance>2 ? wrapAngle((phi+Math.PI/2-heading)*180/Math.PI) : this.launch.angle;
+                const heading=Math.atan2(-dy,dx);
+                const angle=distance>2 ? wrapAngle(heading*180/Math.PI) : this.launch.angle;
                 this.setLaunch({angle, ratio:clamp((distance-20)/44,0,this.config.maxRatio)});
             } else {
                 if(Math.hypot(p.x-this.drag.start.x,p.y-this.drag.start.y)>4) { this.doubleEligible=false; this.clickOnBase=false; }
@@ -336,7 +360,7 @@
         }
 
         fire() {
-            if (!this.valid || this.pending !== null) return;
+            if (!this.valid || this.pending !== null || this.connection!=="connected") return;
             const request = {id: crypto.randomUUID(), epoch: this.epoch, ...this.launch};
             this.pending = request.id;
             el("fire").disabled = true; el("fire").textContent = "Computing flight…";
@@ -355,7 +379,7 @@
             if (result.error) { el("launch-message").textContent = result.error; return; }
             this.advance(performance.now());
             this.add(result.flight);
-            el("launch-message").textContent = `Shot #${this.nextNumber-1} launched. Ready to fire again.`;
+            el("launch-message").textContent = "";
         }
 
         add(flight) {
@@ -426,6 +450,7 @@
 
         clear() {
             this.epoch++; this.flights = []; this.selected = null; this.follow = null;
+            this.nextNumber = 1;
             this.clock = 0; this.lastFrame = performance.now();
             el("flight-log").replaceChildren(); el("flight-count").textContent = "0";
             el("empty-log").hidden=false;
@@ -435,11 +460,55 @@
         pause() {
             this.advance(performance.now()); this.paused = !this.paused;
             el("pause").textContent = this.paused ? "Resume" : "Pause";
+            this.renderStatus();
         }
 
         advance(now) {
-            if (!this.paused && !document.hidden) this.clock += Math.max(0, now-this.lastFrame)/1000*this.launch.rate;
+            if (!this.paused && !document.hidden && this.connection==="connected" && this.hasMovingFlights()) this.clock += Math.max(0, now-this.lastFrame)/1000*this.launch.rate;
             this.lastFrame = now;
+        }
+
+        hasMovingFlights() {
+            return this.flights.some(flight=>flight.repeat || this.clock-flight.start<flight.duration);
+        }
+
+        renderStatus() {
+            let state, label;
+            if(this.connection==="connecting") {state="connecting";label="Connecting";}
+            else if(this.connection!=="connected") {state="disconnected";label="Stopped · disconnected";}
+            else if(this.paused || document.hidden) {state="paused";label="Paused";}
+            else if(!this.hasMovingFlights()) {state="stopped";label="Stopped";}
+            else {state="running";label="Running";}
+            el("simulation-status").dataset.state=state;
+            el("simulation-status-label").textContent=label;
+            el("simulation-status").title=this.connection==="connected" ? "Connected to the local app server" : "Checking the local app connection";
+        }
+
+        async checkConnection() {
+            // Heartbeats are independent of numerical flight requests and RAF.
+            // A timeout ensures an unreachable server cannot leave a green light.
+            const controller=new AbortController();
+            const timeout=setTimeout(()=>controller.abort(),1500);
+            try {
+                const response=await fetch("/health",{cache:"no-store",signal:controller.signal});
+                if(!response.ok || (await response.json()).app!=="orbitworks-v5") throw Error("Server unavailable");
+                this.advance(performance.now());
+                const reconnecting=this.connection==="disconnected";
+                this.connection="connected";
+                if(reconnecting) {
+                    this.paused=true;el("pause").textContent="Resume";
+                    el("launch-message").textContent="Reconnected. Resume when you are ready.";
+                }
+            } catch(error) {
+                this.advance(performance.now());
+                this.connection="disconnected";
+                if(this.pending) {this.seen.add(this.pending);this.pending=null;el("fire").textContent="Launch";}
+                el("launch-message").textContent="Server disconnected. Restart the app to continue.";
+            } finally {
+                clearTimeout(timeout);
+                this.refreshLaunch();this.renderStatus();
+                this.heartbeat=setTimeout(()=>this.checkConnection(),2000);
+            }
         }
 
         fit() {
@@ -474,7 +543,8 @@
             }
             this.draw();
             if (now-this.lastStatus>120) {
-                el("simulation-clock").textContent = `t = ${durationLabel(this.clock)}${this.paused ? " · paused" : ""}`;
+                el("simulation-clock").textContent = `Time elapsed: ${durationLabel(this.clock)}`;
+                this.renderStatus();
                 for (const flight of this.flights) {
                     const age = this.clock-flight.start;
                     const status=age<flight.duration ? "Flying" : flight.repeat ? "Lap "+(Math.floor(age/flight.duration)+1) : flight.outcome;
@@ -526,7 +596,7 @@
             gradient.addColorStop(0,"#497ea4"); gradient.addColorStop(1,"#213f5d");
             ctx.beginPath(); ctx.arc(earth.x,earth.y,scale,0,TAU); ctx.fillStyle=gradient; ctx.fill();
             ctx.strokeStyle="#6fa1c377"; ctx.lineWidth=1.5; ctx.stroke();
-            if(scale>25) { ctx.fillStyle="#bed5e6"; ctx.font="11px Segoe UI, sans-serif"; ctx.textAlign="center"; ctx.fillText("EARTH",earth.x,earth.y+4); }
+            if(scale>25) { ctx.fillStyle="#bed5e6"; ctx.font=`11px ${this.fontFamily}`; ctx.textAlign="center"; ctx.fillText("EARTH",earth.x,earth.y+4); }
 
             const {base,tip}=this.handles();
             ctx.strokeStyle=this.valid ? "#f0f5ff" : "#ff797d"; ctx.fillStyle=ctx.strokeStyle; ctx.lineWidth=2;
@@ -549,13 +619,13 @@
     }
 
     // Public pure geometry helpers also make the preview independently testable.
-    window.cannonV3 = {preview, sample, scene: null};
+    window.cannonV5 = {preview, sample, scene: null};
     function update(config, result) {
         const canvas=el("orbit-canvas");
         if(!canvas) return new Promise((resolve)=>setTimeout(()=>resolve(update(config,result)),25));
-        if(!window.cannonV3.scene) window.cannonV3.scene=new CannonScene(canvas,config);
-        window.cannonV3.scene.receive(result);
+        if(!window.cannonV5.scene) window.cannonV5.scene=new CannonScene(canvas,config);
+        window.cannonV5.scene.receive(result);
         return "ready";
     }
-    window.dash_clientside=Object.assign({},window.dash_clientside,{cannonV3:{update}});
+    window.dash_clientside=Object.assign({},window.dash_clientside,{cannonV5:{update}});
 })();
