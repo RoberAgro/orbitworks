@@ -63,7 +63,7 @@ poetry run python -c "import orbitworks"
 Launch the local app and open it in your default browser:
 
 ```bash
-poetry run python scripts/launch_app.py
+poetry run python examples/launch_app.py
 ```
 
 The script calls `orbitworks.launch_app(debug=False, open_browser=True)`.

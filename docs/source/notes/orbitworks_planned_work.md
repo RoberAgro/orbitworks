@@ -150,7 +150,7 @@ orbitworks/
 │       ├── graphics_plotly.py
 │       ├── plotting.py
 │       └── nbody.py
-├── scripts/
+├── examples/
 │   ├── 01_circular_orbits.py
 │   ├── 02_escape_velocity.py
 │   ├── 03_conic_sections.py

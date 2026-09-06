@@ -1,6 +1,6 @@
 """Closed-form two-body orbital elements, classification, and conservation checks.
 
-Like :mod:`orbitworks.propagation`, every function here takes the
+Like :mod:`orbitworks.numerical`, every function here takes the
 gravitational parameter ``mu`` explicitly, so the same code serves both SI-unit
 and nondimensional (``mu=1``) callers. Position and velocity are always the
 planar Cartesian vectors ``[x, y]`` / ``[vx, vy]``.
@@ -55,12 +55,14 @@ def classify_orbit(
 
     For position ``r`` and velocity ``v``, the invariants are
 
-        energy = |v|^2/2 - mu/|r|,
-        ell = (r x v)_z,
-        e_vector = ((|v|^2 - mu/|r|)*r - (r.v)*v) / mu.
+    .. code-block:: text
+
+        energy = |v|^2/2 - mu/|r|
+        ell = (r x v)_z
+        e_vector = ((|v|^2 - mu/|r|)*r - (r.v)*v) / mu
 
     ``energy_tolerance`` is relative to the local gravitational-energy scale
-    ``mu/|r|``; energy within that tolerance of zero is classified as a
+    ``mu / |r|``; energy within that tolerance of zero is classified as a
     parabola. ``eccentricity_tolerance`` distinguishes a circle from a
     (numerically) eccentric ellipse. Angular-momentum degeneracy (a purely
     radial trajectory) is not classified here, since callers differ on how to

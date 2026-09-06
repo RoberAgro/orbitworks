@@ -45,6 +45,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-# Release from a clean main branch: poetry run bumpversion patch
-# Then push main and the generated tag together (replace the example version):
-# git push --atomic origin main app-v0.1.1
+# Release from a clean main branch:
+# poetry run bumpversion patch
+# git push origin main --tags

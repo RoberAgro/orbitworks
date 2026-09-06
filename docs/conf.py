@@ -22,7 +22,7 @@ docs_build_config = {
     "build_dir": "_build/html",
     "api_output_dir": "source/api",
     "src_dir": "../src",
-    "exclude_modules": [],
+    "exclude_modules": ["../src/orbitworks/app_backup.py"],
     "sphinx_build_options": ["--fail-on-warning", "--keep-going"],
     "zotero_api_key_env": "ZOTERO_API_KEY",
     "zotero_group_id": "5271514",
@@ -124,6 +124,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     "notes",
+    "theory/old",
 ]
 
 # ---------------------------------------------------------------------------

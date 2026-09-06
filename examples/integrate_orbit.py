@@ -1,14 +1,14 @@
 """Integrate circular, elliptical, parabolic, or hyperbolic Kepler orbits.
 
-This is a v2 of ``07_integrate_general_orbit_scipy.py`` that calls the shared
-core functions in ``orbitworks.propagation``, ``orbitworks.analytical`` and
-``orbitworks.geometry`` instead of reimplementing them locally. Those same
-functions also back ``orbitworks.app``, so both this script and the app now
-run one tested implementation of the equations of motion, orbital-element
-classification and conic-shape sampling. Only script-specific orchestration
-(choosing an integration duration, wrapping the result, printing a report,
-and plotting) stays local, alongside ``OrbitSolution``, which is bookkeeping
-for this script's plots rather than a core physics result.
+This calls the shared core functions in ``orbitworks.numerical``,
+``orbitworks.analytical`` and ``orbitworks.geometry`` instead of
+reimplementing them locally. Those same functions also back
+``orbitworks.app``, so both this script and the app run one tested
+implementation of the equations of motion, orbital-element classification and
+conic-shape sampling. Only script-specific orchestration (choosing an
+integration duration, wrapping the result, printing a report, and plotting)
+stays local, alongside ``OrbitSolution``, which is bookkeeping for this
+script's plots rather than a core physics result.
 
 The initial Cartesian state determines the conic; the integrator does not need
 to be told which orbit type to expect. Specific orbital energy classifies the
@@ -29,7 +29,7 @@ import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
 from matplotlib.patches import Circle
 
-from orbitworks import analytical, geometry, propagation
+from orbitworks import analytical, geometry, numerical
 from orbitworks.constants import R_EARTH, MU_EARTH
 from orbitworks.graphics_mpl import set_plot_options
 
@@ -74,7 +74,7 @@ class OrbitSolution:
 
     This is presentation bookkeeping for this script (plots, report, GIF
     export), not a core physics result, so it stays local rather than moving
-    to ``orbitworks.propagation``.
+    to ``orbitworks.numerical``.
     """
 
     def __init__(
@@ -150,11 +150,11 @@ def integrate_orbit(state, elements):
     """
     duration = integration_duration(elements)
     output_time = np.linspace(0.0, duration, OUTPUT_POINTS)
-    events = [propagation.make_collision_event(CENTRAL_BODY_RADIUS)]
+    events = [numerical.make_collision_event(CENTRAL_BODY_RADIUS)]
     if not elements.is_bound:
-        events.append(propagation.make_escape_event(ESCAPE_RADIUS))
+        events.append(numerical.make_escape_event(ESCAPE_RADIUS))
 
-    result = propagation.propagate(
+    result = numerical.propagate(
         state,
         GRAVITATIONAL_PARAMETER,
         duration,

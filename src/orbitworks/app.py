@@ -12,7 +12,7 @@ from uuid import uuid4
 import numpy as np
 from dash import ClientsideFunction, Dash, Input, Output, dcc, html
 
-from orbitworks import analytical, propagation
+from orbitworks import analytical, numerical
 from orbitworks.constants import MU_EARTH, R_EARTH, YEAR
 
 # SI constants; launch controls measure x/y in Earth radii and speed in local vc.
@@ -57,7 +57,7 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
     The ratio is preserved while positioning the launcher, not the SI speed.
 
     Orbital elements, classification, and the numerical propagation itself
-    come from ``orbitworks.analytical`` and ``orbitworks.propagation``, in
+    come from ``orbitworks.analytical`` and ``orbitworks.numerical``, in
     nondimensional units (mu=1, length in Earth radii). A completed bound
     orbit can replay its numerical period; impacts, boundary stops, and time
     caps cannot.
@@ -101,14 +101,14 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
     time_cap = MAXIMUM_FLIGHT_TIME / TIME_UNIT
     duration = min(period, time_cap) if bound else time_cap
     events = [
-        propagation.make_collision_event(1.0),
-        propagation.make_escape_event(OUTER_RADIUS),
+        numerical.make_collision_event(1.0),
+        numerical.make_escape_event(OUTER_RADIUS),
     ]
     # No radial turn is needed for a zero-angular-momentum impact: the normal
     # event is reached before the point-mass singularity.
     if periapsis < 1 and abs(ell) > 1e-10:
-        events.append(propagation.make_periapsis_turn_event())
-    result = propagation.propagate(
+        events.append(numerical.make_periapsis_turn_event())
+    result = numerical.propagate(
         state,
         MU,
         duration,
@@ -128,7 +128,7 @@ def compute_positioned_flight(x, y, speed_ratio, angle):
             raise ValueError(
                 "This grazing contact is below numerical resolution; adjust the angle slightly."
             )
-        end_time = propagation.refine_radius_crossing(result.sol, 1.0, (0, end_time))
+        end_time = numerical.refine_radius_crossing(result.sol, 1.0, (0, end_time))
         outcome = "impact"
     else:
         outcome = "orbiting" if bound and period <= time_cap else "time limit"

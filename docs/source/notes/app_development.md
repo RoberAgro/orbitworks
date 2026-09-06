@@ -24,7 +24,7 @@ READMEs and review checklists.
 | `src/orbitworks/constants.py` | Shared physical constants, including Earth's radius and gravitational parameter |
 | `render.yaml` | Render deployment configuration using Gunicorn and `orbitworks.app:server` |
 | `src/orbitworks/__init__.py` | Lazy-imported `launch_app()` helper for local development |
-| `scripts/launch_app.py` | Simple local entry point with browser and debug settings at the top |
+| `examples/launch_app.py` | Simple local entry point with browser and debug settings at the top |
 | `tests/test_orbitworks_app.py` | Physical regression checks against the current packaged app |
 | `tests/test_orbitworks_interactions.py` | Layout, callback, asset, health, shortcut-source and launcher checks |
 
@@ -32,7 +32,7 @@ Run the current app from the repository root:
 
 ```bash
 poetry install
-poetry run python scripts/launch_app.py
+poetry run python examples/launch_app.py
 ```
 
 The script opens `http://127.0.0.1:8054` in the default browser. Stop the local
